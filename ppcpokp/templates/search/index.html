@@ -1,0 +1,822 @@
+{% extends "base.html" %}
+{% block title %}
+Search
+{% endblock title %}
+
+{% block include %}
+<style>
+    :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --accent-color: #e74c3c;
+        --light-gray: #f8f9fa;
+        --border-color: #dee2e6;
+    }
+
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    .card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 25px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 600;
+        padding: 18px 25px;
+        border-bottom: none;
+    }
+
+    .card-body {
+        padding: 30px;
+    }
+
+    .required-label::after {
+        content: " *";
+        color: var(--accent-color);
+        font-weight: bold;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 8px;
+    }
+
+    .search-condition {
+        background-color: var(--light-gray);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 4px solid var(--secondary-color);
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .search-condition:hover {
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .remove-condition {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        color: #dc3545;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .remove-condition:hover {
+        opacity: 1;
+    }
+
+    .btn-add {
+        background-color: #ecf0f1;
+        border: 2px dashed #bdc3c7;
+        color: #7f8c8d;
+        font-weight: 500;
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        transition: all 0.3s;
+    }
+
+    .btn-add:hover {
+        background-color: #e0e6e8;
+        border-color: var(--secondary-color);
+        color: var(--secondary-color);
+    }
+
+    .btn-primary {
+        background-color: var(--secondary-color);
+        border: none;
+        padding: 12px 30px;
+        font-weight: 600;
+        border-radius: 6px;
+    }
+
+    .btn-primary:hover {
+        background-color: #2980b9;
+    }
+
+    .btn-reset {
+        background-color: #95a5a6;
+        border: none;
+        padding: 12px 30px;
+        font-weight: 600;
+        border-radius: 6px;
+    }
+
+    .btn-reset:hover {
+        background-color: #7f8c8d;
+    }
+
+    .range-values {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .condition-counter {
+        display: inline-block;
+        background-color: var(--secondary-color);
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 24px;
+        font-size: 12px;
+        margin-right: 10px;
+    }
+
+    .filter-type-label {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-check-label {
+        font-weight: normal;
+    }
+
+    .match-type {
+        font-size: 0.85rem;
+        color: #666;
+        font-style: italic;
+        margin-left: 5px;
+    }
+
+    .multiselect-dropdown {
+        max-height: 150px;
+        overflow-y: auto;
+    }
+
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 20px 15px;
+        }
+
+        .search-condition {
+            padding: 15px;
+        }
+    }
+</style>
+{% endblock include %}
+
+{% block content %}
+<div class="container pt-2">
+
+        <nav aria-label="breadcrumb" class="breadcrumb-nav mt-2 mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('index.index') }}">Home</a></li>
+            <li class="breadcrumb-item">Search</li>
+            <li class="breadcrumb-item active" aria-current="page">Advanced Search</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    <i class="bi bi-search me-2"></i>
+                    Advanced Search
+                </div>
+                <div class="card-body">
+                    <!-- 基本信息部分 -->
+                    <div class="mb-4">
+                        <h5 class="filter-type-label">
+                            <span class="condition-counter">1</span>
+                            Model Study Type <span class="text-danger">*</span>
+                        </h5>
+                        <!-- 检索类型选择 -->
+                        <div class="mb-4">
+                            <div class="btn-group w-100" role="group" aria-label="Model Style Type">
+                                <input type="radio" class="btn-check" name="searchType" id="development"
+                                    value="development" autocomplete="off" checked>
+                                <label class="btn btn-outline-primary" for="development">Model Development</label>
+
+                                <input type="radio" class="btn-check" name="searchType" id="validation"
+                                    value="validation" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="validation">Model External
+                                    Validation</label>
+
+                                <input type="radio" class="btn-check" name="searchType" id="comparison"
+                                    value="comparison" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="comparison">Model External
+                                    Comparison</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 动态添加的筛选条件区域 -->
+                    <div id="dynamicConditions">
+                        <h5 class="filter-type-label mb-3">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Add Filter Conditions
+                        </h5>
+                        <p class="text-muted mb-4">Click the button below to add filter conditions, you can add multiple
+                            conditions for combined searching</p>
+                    </div>
+
+                    <!-- 添加条件按钮 -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-add" id="addConditionBtn">
+                                <i class="bi bi-plus-lg me-2"></i>Add Filter Conditions
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 操作按钮 -->
+                    <div class="row mt-5">
+                        <div class="col-md-6 mb-2 mb-md-0">
+                            <button type="button" class="btn btn-reset w-100" id="resetBtn">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Reset All Conditions
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-primary w-100" id="searchBtn">
+                                <i class="bi bi-search me-2"></i>Execute Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 筛选条件计数器 -->
+            <div class="alert alert-info d-flex align-items-center">
+                <i class="bi bi-info-circle me-2"></i>
+                <div>
+                    <span id="conditionCount">0</span> filter conditions have been added
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 筛选条件模板 (隐藏) -->
+<div id="conditionTemplate" class="d-none">
+    <div class="search-condition" data-condition-id="">
+        <div class="remove-condition" title="Delete Condition">
+            <i class="bi bi-x-circle"></i>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">Filter Type</label>
+                <select class="form-select condition-type">
+                    <option value="">Select Filter Type</option>
+                    <option value="model_id">Model ID</option>
+                    <option value="model_name">Model Name</option>
+                    <option value="title">Title</option>
+                    <option value="pmid">PMID</option>
+                    <option value="authors">Authors</option>
+                    <option value="journal">Journal Name</option>
+                    <option value="country">Country</option>
+                    <option value="pub_year">Publication Year</option>
+                    <option value="model_type">Model Type</option>
+                    <option value="target_outcome">Target Outcome</option>
+                    <option value="population_category">Target Population Category</option>
+                    <option value="surgery_discipline">Surgical Specialty Category</option>
+                    <option value="variable_number">Model Variable Number</option>
+                    <option value="variable_category">Model Variable Category</option>
+                    <option value="timing_prediction">Timing of prediction</option>
+                    <option value="application_modality">Clinical Application Modality</option>
+                </select>
+            </div>
+            <div class="col-md-8 condition-input-container">
+                <!-- 动态内容将在这里加载 -->
+                <div class="text-muted">Please select a filter type first</div>
+            </div>
+        </div>
+
+        <div class="match-info mt-2">
+            <!-- 匹配信息将在这里显示 -->
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+{% block script %}
+<script>
+    // 筛选条件配置
+    const conditionConfig = {
+        model_id: {
+            label: "Model ID",
+            inputType: "text",
+            placeholder: "Input Model ID"
+        },
+        model_name: {
+            label: "Model Name",
+            inputType: "text",
+            placeholder: "Input Model Name"
+        },
+        title: {
+            label: "Title",
+            inputType: "text",
+            placeholder: "Input Literature Title"
+        },
+        pmid: {
+            label: "PMID",
+            inputType: "number",
+            placeholder: "Input PMID"
+        },
+        authors: {
+            label: "Authors",
+            inputType: "text",
+            placeholder: "Input Author Name"
+        },
+        journal: {
+            label: "Journal Name",
+            inputType: "text",
+            placeholder: "Input Jornal Name"
+        },
+        country: {
+            label: "Country",
+            inputType: "text",
+            placeholder: "Input Country"
+        },
+        pub_year: {
+            label: "Publication Year",
+            inputType: "number",
+            placeholder: "Input Publication Year"
+        },
+        model_type: {
+            label: "Model Type",
+            sub_name: "model_type_subgroup",
+            inputType: "dual-select",
+            options: {
+                "Traditional Statistical Model":
+                    ["Logistic Regression", "Linear Regression", "Cox Proportional-Hazards Model",
+                        "Least Absolute Shrinkage and Selection Operator", "Ridge Regression", "Linear Discriminant Analysis"],
+                "Classical Machine Learning Model":
+                    ["Support Vector Machine", "K-Nearest Neighbors", "Bayesian Network", "Naïve Bayes",
+                        "Optimal Classification Trees", "Classification and Regression Tree", "Decision Tree"],
+                "Ensemble Learning Model":
+                    ["Random Forest", "Gradient Boosting Machine", "Gradient Boosting Decision Tree",
+                        "Extreme Gradient Boosting", "Light Gradient Boosting Machine", "Category Boosting",
+                        "Adaptive Boosting"],
+                "Deep Learning Model":
+                    ["Neural Network", "Multi-Layer Perceptron", "Convolutional Neural Network",
+                        "Deep Neural Network", "Long Short-Term Memory"],
+                "Multi-Model / Hybrid Learning Strategy": null,
+                "Unclassified Method": null
+            }
+        },
+        target_outcome: {
+            label: "Target Outcome",
+            inputType: "multicheck",
+            options: [
+                "ARDS", "Atelectasis", "Pleural effusion", "Pneumonia", "Pneumothorax", "PPCs", "Pulmonary embolism",
+                "Respiratory failure", "Respiratory infection"
+            ]
+        },
+        population_category: {
+            label: "Target Population Category",
+            inputType: "multicheck",
+            options: [
+                "General Surgical Population", "Older Adults / Elderly", "Pediatric Population", "High-Risk Patients"
+            ]
+        },
+        surgery_discipline: {
+            label: "Surgical Specialty Category",
+            inputType: "multicheck",
+            options: [
+                "General Surgery", "Orthopedic / Spine Surgery", "Mixed / Non-specific Surgery",
+                "Thoracic Surgery", "Cardiac Surgery", "Neurosurgery"
+            ]
+        },
+        variable_number: {
+            label: "Model Variable Number",
+            inputType: "range",
+            min: 2,
+            max: 40
+        },
+        variable_category: {
+            label: "Model Variables Category",
+            inputType: "multicheck",
+            options: [
+                "Patient Baseline Characteristics", "Preoperative Clinical & Laboratory Assessment",
+                "Imaging and Tumor-related Characteristics", "Surgical and Anesthetic Characteristics",
+                "Intraoperative Course and Monitoring", "Early Postoperative Measures and Support",
+                "Risk Scores and Derived Features", "Unclassified or Pending Information"
+            ]
+        },
+        timing_prediction: {
+            label: "Timing of prediction",
+            inputType: "radio",
+            options: [
+                "Preoperative", "Intraoperative", "Postoperative"
+            ]
+        },
+        application_modality: {
+            label: "Clinical Application Modality",
+            inputType: "multicheck",
+            options: [
+                "Point-Based Risk Score", "Algorithm-Only Model", "Nomogram-Based Tool", "Digital Implementation Tool"
+            ]
+        }
+    };
+
+    // 条件计数器
+    let conditionId = 0;
+
+    // DOM加载完成后执行
+    document.addEventListener('DOMContentLoaded', function () {
+        // 添加条件按钮点击事件
+        document.getElementById('addConditionBtn').addEventListener('click', addCondition);
+
+        // 重置按钮点击事件
+        document.getElementById('resetBtn').addEventListener('click', resetAllConditions);
+
+        // 搜索按钮点击事件
+        document.getElementById('searchBtn').addEventListener('click', performSearch);
+
+        // 更新条件计数
+        updateConditionCount();
+    });
+
+    // 添加新条件
+    function addCondition() {
+        conditionId++;
+        const template = document.getElementById('conditionTemplate').cloneNode(true);
+        template.classList.remove('d-none');
+        template.id = '';
+
+        const conditionDiv = template.querySelector('.search-condition');
+        conditionDiv.setAttribute('data-condition-id', conditionId);
+
+        // 设置条件类型选择事件
+        const typeSelect = conditionDiv.querySelector('.condition-type');
+        typeSelect.addEventListener('change', function () {
+            updateConditionInput(conditionDiv, this.value);
+        });
+
+        // 设置删除按钮事件
+        const removeBtn = conditionDiv.querySelector('.remove-condition');
+        removeBtn.addEventListener('click', function () {
+            conditionDiv.remove();
+            updateConditionCount();
+        });
+
+        // 添加到条件区域
+        document.getElementById('dynamicConditions').appendChild(conditionDiv);
+
+        // 更新条件计数
+        updateConditionCount();
+    }
+
+    // 更新条件输入区域
+    function updateConditionInput(conditionDiv, conditionType) {
+        const config = conditionConfig[conditionType];
+        const inputContainer = conditionDiv.querySelector('.condition-input-container');
+
+        if (!config) {
+            inputContainer.innerHTML = '<div class="text-muted">请先选择筛选类型</div>';
+            return;
+        }
+
+        // 根据输入类型生成不同的HTML
+        let inputHtml = '';
+
+        switch (config.inputType) {
+            case 'text':
+            case 'number':
+                inputHtml = `
+                        <label class="form-label">${config.label}</label>
+                        <input type="${config.inputType}" class="form-control" placeholder="${config.placeholder || ''}">
+                    `;
+                break;
+
+            case 'dual-select':
+                inputHtml = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">${config.label} (Main Category)</label>
+                                <select class="form-select main-category">
+                                    <option value="">Select Main Category</option>
+                                    ${Object.keys(config.options).map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">${config.label} (Subcategory)</label>
+                                <select class="form-select sub-category" disabled>
+                                    <option value="">Please select a main category first</option>
+                                </select>
+                            </div>
+                        </div>
+                    `;
+                break;
+
+            case 'multicheck':
+                inputHtml = `
+                        <label class="form-label">${config.label}</label>
+                        <div class="multiselect-dropdown">
+                            ${config.options.map((opt, index) => `
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="${opt}" id="check-${conditionDiv.getAttribute('data-condition-id')}-${index}">
+                                    <label class="form-check-label" for="check-${conditionDiv.getAttribute('data-condition-id')}-${index}">
+                                        ${opt}
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                break;
+
+            case 'range':
+                inputHtml = `
+                        <div>
+                            <div class="row">
+                                <div class="col-sm-6 mb-2 mb-sm-0">
+                                    <label class="form-label">Minimum Value</label>
+                                    <input type="number" class="form-control range-min" min="${config.min}" max="${config.max}" value="${config.min}">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label">Maximum Value</label>
+                                    <input type="number" class="form-control range-max" min="${config.min}" max="${config.max}" value="${config.max}">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                break;
+
+            case 'radio':
+                inputHtml = `
+                        <label class="form-label">${config.label}</label>
+                        <div>
+                            ${config.options.map((opt, index) => `
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="timing-${conditionDiv.getAttribute('data-condition-id')}" id="radio-${conditionDiv.getAttribute('data-condition-id')}-${index}" value="${opt}">
+                                    <label class="form-check-label" for="radio-${conditionDiv.getAttribute('data-condition-id')}-${index}">
+                                        ${opt}
+                                    </label>
+                                </div>
+                            `).join('')}
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="timing-${conditionDiv.getAttribute('data-condition-id')}" id="radio-${conditionDiv.getAttribute('data-condition-id')}-none" value="" checked>
+                                <label class="form-check-label" for="radio-${conditionDiv.getAttribute('data-condition-id')}-none">
+                                    -
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                break;
+        }
+
+        inputContainer.innerHTML = inputHtml;
+
+        // 为双级下拉设置事件
+        if (config.inputType === 'dual-select') {
+            const mainSelect = conditionDiv.querySelector('.main-category');
+            const subSelect = conditionDiv.querySelector('.sub-category');
+
+            // 初始化状态
+            subSelect.disabled = true;
+            subSelect.innerHTML = '<option value="">Please select main category first</option>';
+
+            mainSelect.addEventListener('change', function () {
+                const selectedMain = this.value;
+                console.log('Selected main:', selectedMain); // 调试用
+
+                if (selectedMain) {
+                    const subOptions = config.options[selectedMain];
+                    console.log('Sub options:', subOptions); // 调试用
+
+                    if (subOptions && Array.isArray(subOptions) && subOptions.length > 0) {
+                        // 有二级选项的情况
+                        subSelect.disabled = false;
+                        subSelect.innerHTML = `
+                    <option value="">Select Subcategory</option>
+                    ${subOptions.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                `;
+                    } else {
+                        // 二级选项为null或空数组
+                        subSelect.disabled = true;
+                        subSelect.innerHTML = '<option value="" selected disabled>-</option>';
+                    }
+                } else {
+                    // 没有选择一级分类
+                    subSelect.disabled = true;
+                    subSelect.innerHTML = '<option value="">Please select main category first</option>';
+                }
+            });
+
+            // 初始触发一次change事件，确保状态正确
+            mainSelect.dispatchEvent(new Event('change'));
+        }
+
+        // 为范围输入设置事件
+        if (config.inputType === 'range') {
+            const minInput = conditionDiv.querySelector('.range-min');
+            const maxInput = conditionDiv.querySelector('.range-max');
+
+            minInput.addEventListener('change', function () {
+                if (parseInt(this.value) < config.min) this.value = config.min;
+                if (parseInt(this.value) > config.max) this.value = config.max;
+                if (parseInt(this.value) > parseInt(maxInput.value)) maxInput.value = this.value;
+            });
+
+            maxInput.addEventListener('change', function () {
+                if (parseInt(this.value) < config.min) this.value = config.min;
+                if (parseInt(this.value) > config.max) this.value = config.max;
+                if (parseInt(this.value) < parseInt(minInput.value)) minInput.value = this.value;
+            });
+        }
+    }
+
+    // 更新条件计数
+    function updateConditionCount() {
+        const conditions = document.querySelectorAll('.search-condition');
+        document.getElementById('conditionCount').textContent = conditions.length - 1;
+    }
+
+    // 重置所有条件
+    function resetAllConditions() {
+        if (confirm('Reset all conditions?')) {
+            // 移除所有动态添加的条件
+            const dynamicConditions = document.getElementById('dynamicConditions');
+            dynamicConditions.querySelectorAll('.search-condition').forEach(condition => {
+                condition.remove();
+            });
+
+            // 重置条件ID计数器
+            conditionId = 0;
+
+            // 更新条件计数
+            updateConditionCount();
+
+            // 显示成功消息
+            showMessage('All conditions reset successfully', 'success');
+        }
+    }
+
+    // 执行搜索
+    function performSearch() {
+        // 获取检索类型
+        const searchType = document.querySelector('input[name="searchType"]:checked').value;
+
+        // 根据检索类型确定目标页面
+        let targetPage;
+        switch (searchType) {
+            case 'development':
+                targetPage = '{{ url_for("search.development") }}';
+                break;
+            case 'validation':
+                targetPage = '{{ url_for("search.validation") }}';
+                break;
+            case 'comparison':
+                targetPage = '{{ url_for("search.comparison") }}';
+                break;
+            default:
+                showMessage('Wrong study type', 'danger');
+                return;
+        }
+
+        // 收集所有条件并构建查询参数
+        const params = new URLSearchParams();
+
+        // 收集筛选条件
+        const conditionElements = document.querySelectorAll('.search-condition');
+        let conditionIndex = 0;
+
+        conditionElements.forEach(condition => {
+            const typeSelect = condition.querySelector('.condition-type');
+            const conditionType = typeSelect.value;
+
+            if (!conditionType) return;
+
+            const config = conditionConfig[conditionType];
+            let value = '';
+            let paramName = '';
+
+            // 根据输入类型获取值
+            switch (config.inputType) {
+                case 'text':
+                case 'number':
+                    const input = condition.querySelector('input');
+                    value = input ? input.value.trim() : '';
+                    paramName = conditionType;
+                    break;
+
+                case 'dual-select':
+                    const mainSelect = condition.querySelector('.main-category');
+                    const subSelect = condition.querySelector('.sub-category');
+
+                    if (mainSelect.value) {
+                        // 检查二级选项是否被选中
+                        if (subSelect.value && subSelect.value !== '') {
+                            // 二级选项被选中：使用 sub_name 作为参数名，二级选项值作为参数值
+                            value = subSelect.value;
+                            paramName = config.sub_name || conditionType; // 使用 sub_name 如果存在
+                        } else {
+                            // 只选中一级选项：使用原 conditionType 作为参数名，一级选项值作为参数值
+                            value = mainSelect.value;
+                            paramName = conditionType;
+                        }
+                    }
+                    break;
+
+                case 'multicheck':
+                    const checkboxes = condition.querySelectorAll('input[type="checkbox"]:checked');
+                    const checkedValues = Array.from(checkboxes).map(cb => cb.value);
+                    if (checkedValues.length > 0) {
+                        // 为每个选中的值添加独立的参数
+                        checkedValues.forEach(checkedValue => {
+                            params.append(conditionType, checkedValue);
+                        });
+                        // 不再使用 paramName 和 value 变量
+                        paramName = null; // 设置为 null，避免后面的逻辑处理
+                    }
+                    break;
+
+                case 'range':
+                    const minInput = condition.querySelector('.range-min');
+                    const maxInput = condition.querySelector('.range-max');
+                    if (minInput && maxInput && minInput.value && maxInput.value) {
+                        // 直接添加到URLSearchParams对象中
+                        params.append(`min_${conditionType}`, minInput.value);
+                        params.append(`max_${conditionType}`, maxInput.value);
+                        // 清除paramName和value，防止后面的逻辑处理
+                        paramName = null;
+                        value = null;
+                    }
+                    break;
+
+                case 'radio':
+                    const selectedRadio = condition.querySelector('input[type="radio"]:checked');
+                    if (selectedRadio && selectedRadio.value) {
+                        value = selectedRadio.value;
+                        paramName = conditionType;
+                    }
+                    break;
+            }
+
+            // 如果有值，添加到参数中
+            if (value && paramName) {
+                // 处理多个相同类型的条件
+                const existingParam = params.get(paramName);
+                if (existingParam) {
+                    params.set(paramName, `${existingParam};${value}`);
+                } else {
+                    params.set(paramName, value);
+                }
+                conditionIndex++;
+            }
+        });
+
+        // 显示搜索参数（调试用）
+        console.log('搜索参数:', Object.fromEntries(params));
+
+        // 构建URL并跳转
+        const queryString = params.toString();
+        const targetUrl = queryString ? `${targetPage}?${queryString}` : targetPage;
+
+        window.location.href = targetUrl;
+    }
+
+    // 显示消息
+    function showMessage(message, type) {
+        // 移除现有消息
+        const existingAlert = document.querySelector('.alert-message');
+        if (existingAlert) existingAlert.remove();
+
+        // 创建新消息
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show alert-message mt-3`;
+        alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+        // 添加到页面
+        document.querySelector('.container').appendChild(alertDiv);
+
+        // 自动滚动到消息
+        alertDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // 初始添加一个条件
+    window.addEventListener('load', function () {
+        // 延迟一点添加第一个条件，让页面先渲染完成
+        setTimeout(() => {
+            addCondition();
+        }, 300);
+    });
+</script>
+{% endblock script %}

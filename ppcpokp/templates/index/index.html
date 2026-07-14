@@ -1,0 +1,766 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home
+{% endblock title %}
+
+{% block include %}
+<!-- Font Awesome 图标 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --primary-color: #5d4e8c;
+        --secondary-color: #f3edf1;
+        --primary-bg: #f3edf1;
+        --accent-color: #0f407b;
+        --text-color: #333;
+        --light-text: #666;
+        --blue-bg: #0f407b;      /* 主题蓝色，用于模块背景 */
+        --white-bg: #ffffff;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #fff;
+        color: var(--text-color);
+    }
+
+    /* ========= 模块全宽背景 ========= */
+    .section-module {
+        width: 100%;
+        padding: 60px 0;
+    }
+    .section-module:first-child {
+        padding-top: 40px;  /* 与原来 header-container 顶部距离一致 */
+    }
+    .section-module:last-child {
+        padding-bottom: 60px;
+    }
+    /* 白色背景模块 */
+    .section-white {
+        background-color: var(--white-bg);
+    }
+    /* 蓝色背景模块 */
+    .section-blue {
+        background-color: var(--blue-bg);
+        color: #ffffff;  /* 模块内基础文字设为白色，但卡片内部会覆盖为深色 */
+    }
+    /* 蓝色模块内的普通段落、描述文字（非卡片内部） */
+    .section-blue .site-description,
+    .section-blue .stat-label,
+    .section-blue .section-subtitle {
+        color: rgba(255,255,255,0.85);
+    }
+    .site-description {
+       width:490px;
+    }
+    .section-blue .section-title {
+        color: #ffffff;
+    }
+    .section-blue .stat-value {
+        color: #ffd966;
+    }
+    /* 保持卡片区域内部不受模块背景影响（卡片本身为白色） */
+    .section-blue .feature-card,
+    .section-blue .card {
+        background-color: #fff;
+        color: #333;
+    }
+    /* 统计卡片容器居中 + 增强视觉效果 */
+    .stats-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+        margin-top: 20px;
+        justify-content: center;  /* 水平居中排列 */
+        align-items: center;
+    }
+    .stat-item {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 15px 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        min-width: 130px;
+        transition: transform 0.3s ease;
+        text-align: center;
+    }
+    .stat-item:hover {
+        transform: translateY(-5px);
+    }
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--accent-color);
+        line-height: 1;
+    }
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--light-text);
+        margin-top: 5px;
+    }
+    /* 蓝色模块下的统计卡片微调 */
+    .section-blue .stat-item {
+        background: rgba(255, 255, 255, 0.95);
+    }
+    .section-blue .stat-value {
+        color: #0f407b;
+    }
+
+    /* 其他原有样式保留，仅补充或调整 */
+    .video-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        height: 100%;
+        max-height: 350px;
+        background-color: #000;
+        position: relative;
+    }
+    .video-player {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .video-controls {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        display: flex;
+        gap: 10px;
+        z-index: 10;
+    }
+    .control-btn {
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .control-btn:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+    .section-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+    .section-title {
+        font-weight: 700;
+        font-size: 2.5rem;
+        color: #003153;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    .section-subtitle {
+        color: var(--light-text);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    .feature-card {
+        background-color: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        height: 100%;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+    }
+    .card-img-container {
+        height: 220px;
+        overflow: hidden;
+        position: relative;
+    }
+    .card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    .feature-card:hover .card-img {
+        transform: scale(1.05);
+    }
+    .card-content {
+        padding: 25px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .card-title-img {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+    .card-title-img i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+    .card-description {
+        color: var(--light-text);
+        line-height: 1.6;
+        flex-grow: 1;
+        margin-bottom: 20px;
+    }
+    .card-button {
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+    }
+    .card-button:hover {
+        background-color: var(--accent-color);
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(93, 78, 140, 0.2);
+    }
+    /* 模型卡片样式 */
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+    .card-header-excellent {
+        background: linear-gradient(135deg, #f5f7fa 0%, #F5CBD8 100%);
+        border-bottom: none;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 1.2rem 1.5rem;
+    }
+    .card-header-good {
+        background: linear-gradient(135deg, #f5f7fa 0%, #E9D9F3 100%);
+        border-bottom: none;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 1.2rem 1.5rem;
+    }
+    .card-header-fair {
+        background: linear-gradient(135deg, #f5f7fa 0%, #F8E0C5 100%);
+        border-bottom: none;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 1.2rem 1.5rem;
+    }
+    .card-header-poor {
+        background: linear-gradient(135deg, #f5f7fa 0%, #E4F0CB 100%);
+        border-bottom: none;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 1.2rem 1.5rem;
+    }
+    .card-title {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .model-id {
+        background-color: #3498db;
+        color: white;
+        border-radius: 20px;
+        padding: 3px 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 0.5rem;
+    }
+    .chart-container {
+        height: 180px;
+        width: 100%;
+    }
+    /* 响应式调整 */
+    @media (max-width: 992px) {
+        .card-img-container {
+            height: 200px;
+        }
+        .section-module {
+            padding: 40px 0;
+        }
+    }
+    @media (max-width: 768px) {
+        .card-img-container {
+            height: 180px;
+        }
+        .section-header {
+            margin-bottom: 30px;
+        }
+        .feature-card {
+            margin-bottom: 25px;
+        }
+        .section-module {
+            padding: 30px 0;
+        }
+    }
+    @media (max-width: 576px) {
+        .card-img-container {
+            height: 160px;
+        }
+        .card-content {
+            padding: 20px;
+        }
+        .logo {
+            height: 50px;
+        }
+        .stat-item {
+            min-width: 100px;
+            padding: 12px 15px;
+        }
+        .stat-value {
+            font-size: 1.6rem;
+        }
+    }
+    /* 辅助文本截断等 */
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .authors-text {
+        margin-top: 8px;
+        font-size: 0.9rem;
+        color: #555;
+    }
+    .table th, .table td {
+        vertical-align: middle;
+    }
+    .profile-table {
+        font-size: 0.85rem;
+    }
+    .icon {
+        display: inline-block;
+        vertical-align: middle;
+        background-image: url('{{ url_for("static", filename="images/icons-sprite.png") }}');
+        background-repeat: no-repeat;
+    }
+    .icon--36 {
+        width: 36px;
+        height: 36px;
+        background-size: 72px 72px;
+    }
+    .icon--36.icon-1 { background-position: 0 0; }
+    .icon--36.icon-2 { background-position: -36px 0; }
+    .icon--36.icon-3 { background-position: 0 -36px; }
+    .icon--36.icon-4 { background-position: -36px -36px; }
+
+    /* 覆盖 style.css 中的 .container min-height，让页面高度自然 */
+.container {
+    min-height: auto !important;
+}
+</style>
+{% endblock include %}
+
+{% block content %}
+<!-- ================= 模块1：介绍 + 视频 + 统计（白色背景） ================= -->
+<div class="section-module section-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <!-- 左侧内容区域 -->
+            <div class="col-lg-6">
+                <p class="section-title">Welcome to PPCPOKP</p>
+                <p class="site-description mx-auto">
+                    <b>PPCPOKP</b> is an online knowledge platform designed to systematically curate,
+                    synthesize, and visualize published prediction models for postoperative pulmonary
+                    complications, providing advanced tools for individualized analysis and model
+                    recommendation.
+                </p>
+                <!-- 统计卡片容器（居中排列） -->
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-value">451</div>
+                        <div class="stat-label">MODELS</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="downloadsCount">0</div>
+                        <div class="stat-label">DOWNLOADS</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">280</div>
+                        <div class="stat-label">PUBLICATIONS</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 右侧视频区域 -->
+            <div class="col-lg-6">
+                <div class="video-container position-relative">
+                    <video id="headerVideo" class="video-player" autoplay loop muted playsinline>
+                        <source src="{{ url_for('static', filename='images/video.mp4') }}" type="video/mp4">
+                        Your browser does not support this video.
+                    </video>
+                    <div class="video-controls">
+                        <button id="playPauseBtn" class="control-btn">
+                            <i class="fas fa-pause play-icon"></i>
+                        </button>
+                        <button id="muteBtn" class="control-btn">
+                            <i class="fas fa-volume-up play-icon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= 模块2：四个功能卡片（蓝色背景，卡片自身为白色） ================= -->
+<div class="section-module section-blue">
+    <div class="container">
+        <div class="row">
+            <!-- Dataset 卡片 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-card">
+                    <div class="card-img-container">
+                        <img src="{{ url_for('static', filename='images/dataset.jpg') }}" alt="Dataset" class="card-img">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title-img">
+                            <i class="fas fa-database"></i> Dataset
+                        </h3>
+                        <p class="card-description">
+                            Browse PPC models extracted from published clinical studies
+                        </p>
+                        <a href="{{ url_for('browse.development') }}" class="card-button">
+                            <i class="fas fa-search me-2"></i> Dataset
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Analysis 卡片 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-card">
+                    <div class="card-img-container">
+                        <img src="{{ url_for('static', filename='images/analysis.jpg') }}" alt="Analysis" class="card-img">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title-img">
+                            <i class="fas fa-chart-bar"></i> Analysis
+                        </h3>
+                        <p class="card-description">
+                            Explore visual summaries of models and source publications
+                        </p>
+                        <a href="{{ url_for('chart.index') }}" class="card-button">
+                            <i class="fas fa-chart-line me-2"></i> Analyses
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Recommendation 卡片 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-card">
+                    <div class="card-img-container">
+                        <img src="{{ url_for('static', filename='images/recommendation.jpg') }}" alt="Recommendation" class="card-img">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title-img">
+                            <i class="fas fa-user-md"></i> Recommendation
+                        </h3>
+                        <p class="card-description">
+                            Select optimal models based on patient-specific parameters
+                        </p>
+                        <a href="{{ url_for('tool.recommendation') }}" class="card-button">
+                            <i class="fas fa-cogs me-2"></i> Recommendations
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Comparison 卡片 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-card">
+                    <div class="card-img-container">
+                        <img src="{{ url_for('static', filename='images/comparison.jpg') }}" alt="Comparison" class="card-img">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title-img">
+                            <i class="fas fa-balance-scale"></i> Comparison
+                        </h3>
+                        <p class="card-description">
+                            Compare published models through interactive filtering tools
+                        </p>
+                        <a href="{{ url_for('tool.comparison') }}" class="card-button">
+                            <i class="fas fa-exchange-alt me-2"></i> Comparison
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= 模块3：模型卡片列表（白色背景） ================= -->
+<div class="section-module section-white">
+    <div class="container">
+        <div class="row">
+
+            <h1 class="section-title text-center w-100 mb-5">Recent Models</h1>
+
+            {% for item in data %}
+            <div class="col-lg-6 col-md-12 mt-4">
+                <div class="card h-100">
+                    <div class="card-header-{{ 
+                            'excellent' if item.score >= 11 
+                            else 'good' if item.score >= 8 
+                            else 'fair' if item.score >= 4 
+                            else 'poor'
+                        }}">
+                        <h5 class="card-title mt-2 clickable-title text-truncate" style="cursor: pointer;"
+                            data-model-id="{{ item.model_id }}" onclick="showDetail('{{ item.model_id }}')">
+                            {{ item.model_name | trim | capitalize_first }}</h5>
+                        <span class="model-id text-nowrap ms-2">{{ item.model_id }}</span>
+                        <span class="icon icon-{{ 
+                            '2' if item.model_type == 'Traditional Statistical Model' 
+                            else '3' if item.model_type == 'Multi-Model / Hybrid Learning Strategy' 
+                            else '4' if item.model_type == 'Unclassified Method' 
+                            else '1' 
+                        }} icon--36"></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="card-title text-center">Model Score System</h6>
+                                <div class="chart-container" id="chart-{{ item.model_id }}"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="card-title text-center">Model Preview</h6>
+                                <table class="table table-striped profile-table table-{{ 
+                                        'excellent' if item.score >= 11 
+                                        else 'good' if item.score >= 8 
+                                        else 'fair' if item.score >= 4 
+                                        else 'poor'
+                                    }}">
+                                    <tbody>
+                                        <tr>
+                                            <th class="align-middle text-center">AUC</th>
+                                            <td class="align-middle text-center">{{ item.auc|remove_all_brackets or 'N/A' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="align-middle text-center">Sensitivity</th>
+                                            <td class="align-middle text-center">{{ item.sensitivity or 'N/A' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="align-middle text-center">Specificity</th>
+                                            <td class="align-middle text-center">{{ item.specificity or 'N/A' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="align-middle text-center">Calibration</th>
+                                            <td class="align-middle text-center">{{ item.calibration or 'N/A' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <b>Total Score: {{ item.score or 'N/A' }}/13</b> | Study Setting:
+                                {{ item.study_setting or 'N/A' }} | Sample Size: {{ item.sample_size_score or 'N/A' }} |
+                                Discrimination (AUC): {{ item.discrimination or 'N/A' }} | Calibration: {{ item.calibration or 'N/A' }} |
+                                Validation: {{ item.validation or 'N/A' }} | Clinical Usability: {{ item.clinical_usability or 'N/A' }}
+                                <hr>
+                                <p class="authors-text text-truncate">AU: {{ item.authors or 'N/A' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- ECharts 脚本 -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@6.0.0/dist/echarts.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const downloadsCountEl = document.getElementById('downloadsCount');
+        if (downloadsCountEl) {
+            fetch("{{ url_for('download.total_clicks') }}")
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Failed to load download counts');
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    const total = Number(data.total_downloads);
+                    downloadsCountEl.textContent = Number.isFinite(total) ? String(total) : '0';
+                })
+                .catch(function () {
+                    downloadsCountEl.textContent = '0';
+                });
+        }
+
+        const video = document.getElementById('headerVideo');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const muteBtn = document.getElementById('muteBtn');
+        const playIcon = playPauseBtn.querySelector('.play-icon');
+        const muteIcon = muteBtn.querySelector('.play-icon');
+
+        if (video) {
+            // 设置播放速度
+            video.playbackRate = 0.75;
+
+            // 播放/暂停控制
+            playPauseBtn.addEventListener('click', function () {
+                if (video.paused) {
+                    video.play();
+                    playIcon.classList.remove('fa-play');
+                    playIcon.classList.add('fa-pause');
+                } else {
+                    video.pause();
+                    playIcon.classList.remove('fa-pause');
+                    playIcon.classList.add('fa-play');
+                }
+            });
+
+            // 静音/取消静音控制
+            muteBtn.addEventListener('click', function () {
+                if (video.muted) {
+                    video.muted = false;
+                    muteIcon.classList.remove('fa-volume-mute');
+                    muteIcon.classList.add('fa-volume-up');
+                } else {
+                    video.muted = true;
+                    muteIcon.classList.remove('fa-volume-up');
+                    muteIcon.classList.add('fa-volume-mute');
+                }
+            });
+
+            video.addEventListener('play', function () {
+                playIcon.classList.remove('fa-play');
+                playIcon.classList.add('fa-pause');
+            });
+
+            video.addEventListener('pause', function () {
+                playIcon.classList.remove('fa-pause');
+                playIcon.classList.add('fa-play');
+            });
+
+            // 移动设备上默认静音
+            if (/Mobi|Android/i.test(navigator.userAgent)) {
+                video.muted = true;
+                muteIcon.classList.remove('fa-volume-up');
+                muteIcon.classList.add('fa-volume-mute');
+            }
+        }
+    });
+
+    // 雷达图初始化函数
+    function initRadarChart(containerId, item) {
+        const chartDom = document.getElementById(containerId);
+        if (!chartDom) return;
+
+        const myChart = echarts.init(chartDom);
+        const indicators = [
+            { name: 'Study design', max: 1 },
+            { name: 'Study setting', max: 2 },
+            { name: 'Sample size', max: 2 },
+            { name: 'Discrimination (AUC)', max: 2 },
+            { name: 'Calibration', max: 2 },
+            { name: 'Validation', max: 2 },
+            { name: 'Clinical usability', max: 2 }
+        ];
+
+        const dataValues = [
+            item.study_design || 0,
+            item.study_setting || 0,
+            item.sample_size_score || 0,
+            item.discrimination || 0,
+            item.calibration || 0,
+            item.validation || 0,
+            item.clinical_usability || 0
+        ];
+
+        let areaColor, lineColor;
+        if (item.score >= 11) {
+            areaColor = 'rgba(245, 203, 216, 0.7)';
+            lineColor = '#E91E63';
+        } else if (item.score >= 8) {
+            areaColor = 'rgba(233, 217, 243, 0.7)';
+            lineColor = '#9C27B0';
+        } else if (item.score >= 4) {
+            areaColor = 'rgba(248, 224, 197, 0.7)';
+            lineColor = '#FF9800';
+        } else {
+            areaColor = 'rgba(228, 240, 203, 0.7)';
+            lineColor = '#8BC34A';
+        }
+
+        const option = {
+            tooltip: { trigger: 'item' },
+            radar: {
+                indicator: indicators,
+                shape: 'circle',
+                radius: '65%',
+                splitNumber: 3,
+                axisName: {
+                    color: '#666',
+                    fontSize: 12,
+                    fontWeight: 'bold'
+                },
+                splitArea: {
+                    areaStyle: {
+                        color: ['rgba(52, 152, 219, 0.1)', 'rgba(52, 152, 219, 0.05)', 'rgba(52, 152, 219, 0.02)']
+                    }
+                },
+                axisLine: {
+                    lineStyle: { color: 'rgba(52, 152, 219, 0.3)' }
+                },
+                splitLine: {
+                    lineStyle: { color: 'rgba(52, 152, 219, 0.3)' }
+                }
+            },
+            series: [{
+                type: 'radar',
+                data: [{
+                    value: dataValues,
+                    name: 'Score',
+                    symbol: 'circle',
+                    symbolSize: 8,
+                    lineStyle: { width: 3, color: lineColor },
+                    areaStyle: { color: areaColor },
+                    itemStyle: { color: lineColor }
+                }]
+            }],
+            grid: { top: 10, bottom: 10, left: 10, right: 10 }
+        };
+
+        myChart.setOption(option);
+        window.addEventListener('resize', function () { myChart.resize(); });
+    }
+
+    function showDetail(id) {
+        var baseUrl = "{{ url_for('browse.development') }}";
+        var params = new URLSearchParams();
+        params.append('modal', 'detail');
+        params.append('detail', id);
+        window.location.href = baseUrl + '?' + params.toString();
+    }
+</script>
+
+{% for item in data %}
+<script>
+    // 为每个模型初始化雷达图
+    initRadarChart("chart-{{ item.model_id }}", {{ item | tojson }});
+</script>
+{% endfor %}
+{% endblock content %}

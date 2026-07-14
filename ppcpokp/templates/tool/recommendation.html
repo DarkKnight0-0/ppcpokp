@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Model Recommendation{% endblock %}
+
+{% block include %}
+<!-- 添加自定义样式以模仿 index.html 中的范围输入外观（可选） -->
+<style>
+    .range-values {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        font-size: 14px;
+        color: #666;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mt-2 mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('index.index') }}">Home</a></li>
+            <li class="breadcrumb-item">Tool</li>
+            <li class="breadcrumb-item active" aria-current="page">Model Recommendation</li>
+        </ol>
+    </nav>
+
+    <!-- 表单 - 使用 GET 提交到 tool.development，包裹两个卡片 -->
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <form method="get" action="{{ url_for('tool.development') }}" id="recommendationForm">
+                <!-- Basic Matching 卡片 -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light blue-header">
+                        <h5 class="mb-0"><i class="bi bi-sliders2 me-2"></i>Basic Matching</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Patient Population -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Patient Population</label>
+                            <select class="form-select" name="population_category">
+                                <option value="" selected>Not specified</option>
+                                <option value="General Surgical Population">General Surgical Population</option>
+                                <option value="Pediatric Population">Pediatric Population</option>
+                                <option value="Older Adults / Elderly">Older Adults / Elderly</option>
+                                <option value="High-Risk Patients">High-Risk Patients</option>
+                            </select>
+                        </div>
+
+                        <!-- Surgical Specialty -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Surgical Specialty</label>
+                            <select class="form-select" name="surgery_discipline">
+                                <option value="" selected>Not specified</option>
+                                <option value="General Surgery">General Surgery</option>
+                                <option value="Thoracic Surgery">Thoracic Surgery</option>
+                                <option value="Cardiac Surgery">Cardiac Surgery</option>
+                                <option value="Orthopedic / Spine Surgery">Orthopedic / Spine Surgery</option>
+                                <option value="Neurosurgery">Neurosurgery</option>
+                                <option value="Mixed / Non-specific Surgery">Mixed / Non-specific Surgery</option>
+                            </select>
+                        </div>
+
+                        <!-- Target Outcome (多选，每行三个) -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Target Outcome</label>
+                            <div class="row g-2">
+                                {% include 'tool/_target_outcome_checkboxes.html' %}
+                            </div>
+                        </div>
+
+                        <!-- Timing of Prediction -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Timing of Prediction</label>
+                            <select class="form-select" name="timing_prediction">
+                                <option value="" selected>Not specified</option>
+                                <option value="Preoperative">Preoperative</option>
+                                <option value="Intraoperative">Intraoperative</option>
+                                <option value="Postoperative">Postoperative</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Matching 卡片 -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light blue-header">
+                        <h5 class="mb-0"><i class="bi bi-gear me-2"></i>Advanced Matching</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Model Type (多选，每行两个) -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Model Type</label>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox"
+                                            id="classicalMachineLearningModel" name="model_type"
+                                            value="Classical Machine Learning Model" autocomplete="off">
+                                        <label class="form-check-label" for="classicalMachineLearningModel">Classical
+                                            Machine Learning</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="deepLearningModel"
+                                            name="model_type" value="Deep Learning Model" autocomplete="off">
+                                        <label class="form-check-label" for="deepLearningModel">Deep Learning</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="ensembleLearningModel"
+                                            name="model_type" value="Ensemble Learning Model" autocomplete="off">
+                                        <label class="form-check-label" for="ensembleLearningModel">Ensemble
+                                            Learning</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox"
+                                            id="multimodelHybridLearningStrategy" name="model_type"
+                                            value="Multi-Model / Hybrid Learning Strategy" autocomplete="off">
+                                        <label class="form-check-label"
+                                            for="multimodelHybridLearningStrategy">Multi-Model / Hybrid</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="traditionalStatisticalModel"
+                                            name="model_type" value="Traditional Statistical Model" autocomplete="off">
+                                        <label class="form-check-label" for="traditionalStatisticalModel">Traditional
+                                            Statistical</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="unclassifiedMethod"
+                                            name="model_type" value="Unclassified Method" autocomplete="off">
+                                        <label class="form-check-label" for="unclassifiedMethod">Unclassified</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Model Variable Number - 修改为最小值/最大值输入框（参考 index.html 样式） -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Model Variable Number</label>
+                            <div class="row">
+                                <div class="col-sm-6 mb-2 mb-sm-0">
+                                    <input type="number" class="form-control" name="min_variable_number"
+                                        placeholder="Min" min="1" value="">
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="number" class="form-control" name="max_variable_number"
+                                        placeholder="Max" min="1" value="">
+                                </div>
+                            </div>
+                            <div class="range-values">
+                                <span>Minimum value</span>
+                                <span>Maximum value</span>
+                            </div>
+                            <small class="text-muted">Leave blank for no limit</small>
+                        </div>
+
+                        <!-- Model Variables Category (多选，每行两个) -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Model Variables Category</label>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="categoryPatientBaseline"
+                                            name="variable_category" value="Patient Baseline Characteristics"
+                                            autocomplete="off">
+                                        <label class="form-check-label" for="categoryPatientBaseline">Patient Baseline
+                                            Characteristics</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="categoryPreoperative"
+                                            name="variable_category"
+                                            value="Preoperative Clinical & Laboratory Assessment" autocomplete="off">
+                                        <label class="form-check-label" for="categoryPreoperative">Preoperative Clinical
+                                            & Lab</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="categoryImagingTumor"
+                                            name="variable_category" value="Imaging and Tumor-related Characteristics"
+                                            autocomplete="off">
+                                        <label class="form-check-label" for="categoryImagingTumor">Imaging /
+                                            Tumor-related</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="categorySurgicalAnesthetic"
+                                            name="variable_category" value="Surgical and Anesthetic Characteristics"
+                                            autocomplete="off">
+                                        <label class="form-check-label" for="categorySurgicalAnesthetic">Surgical /
+                                            Anesthetic</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="categoryIntraoperative"
+                                            name="variable_category" value="Intraoperative Course and Monitoring"
+                                            autocomplete="off">
+                                        <label class="form-check-label" for="categoryIntraoperative">Intraoperative
+                                            Course</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="categoryEarlyPostoperative"
+                                            name="variable_category" value="Early Postoperative Measures and Support"
+                                            autocomplete="off">
+                                        <label class="form-check-label" for="categoryEarlyPostoperative">Early
+                                            Postoperative</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="categoryRiskScores"
+                                            name="variable_category" value="Risk Scores and Derived Features"
+                                            autocomplete="off">
+                                        <label class="form-check-label" for="categoryRiskScores">Risk Scores /
+                                            Derived</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="categoryUnclassified"
+                                            name="variable_category" value="Unclassified or Pending Information"
+                                            autocomplete="off">
+                                        <label class="form-check-label" for="categoryUnclassified">Unclassified /
+                                            Pending</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Clinical Application Modality (多选，每行两个) -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Clinical Application Modality</label>
+                            <div class="row g-2">
+                                {% include 'tool/_modality_checkboxes.html' %}
+                            </div>
+                        </div>
+
+                        <!-- 提交按钮（位于卡片底部） -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-search me-1"></i>Find
+                                Models</button>
+                            <a href="{{ url_for('tool.recommendation') }}" class="btn btn-outline-secondary"><i
+                                    class="bi bi-arrow-repeat me-1"></i>Reset</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

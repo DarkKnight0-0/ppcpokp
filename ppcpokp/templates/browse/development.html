@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% endblock title %}
+
+{% block include %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.24.1/bootstrap-table.min.css">
+
+<!-- 引入 noUiSlider -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.css" />
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/browse.css') }}">
+{% endblock include %}
+
+{% block content %}
+<div class="container">
+
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mt-2 mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('index.index') }}">Home</a></li>
+            <li class="breadcrumb-item">Browse</li>
+            <li class="breadcrumb-item active" aria-current="page">Model Development</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-3 col-sm-12">
+
+            <!-- 侧边栏 -->
+            <div class="sidebar" id="sidebar">
+                <!-- 统一使用一个表单 -->
+                <form id="filterForm">
+
+                    <label for="modelName" class="form-label fw-bold">Model Name</label>
+
+                    <div class="d-flex mb-3">
+
+                        <input name="model_name" id="model_name" class="form-control me-2" type="search"
+                            placeholder="Model Name" aria-label="Search" autocomplete="off">
+
+                    </div>
+
+
+
+                    <label for="publicationYear" class="form-label fw-bold">Publication Year</label>
+
+                    <!-- 滑块容器 -->
+
+                    <div id="yearRangeSlider" class="mb-4"></div>
+
+                    <!-- 隐藏字段用于存储滑块值 -->
+
+                    <input type="hidden" id="minYearInput" name="minYear">
+
+                    <input type="hidden" id="maxYearInput" name="maxYear">
+
+                    <br>
+
+                    <label for="utility" class="form-label fw-bold">Utility of Model Score</label>
+
+                    <div class="form-check mb-2">
+
+                        <input class="form-check-input" type="checkbox" id="excellent" name="excellent" value="true"
+                            autocomplete="off">
+
+                        <label class="form-check-label" for="excellent"><span style="color: #F5CBD8;">■</span>
+
+                            Excellent</label>
+
+                    </div>
+
+                    <div class="form-check mb-2">
+
+                        <input class="form-check-input" type="checkbox" id="good" name="good" value="true"
+                            autocomplete="off">
+
+                        <label class="form-check-label" for="good"><span style="color: #E9D9F3;">■</span> Good</label>
+
+                    </div>
+
+                    <div class="form-check mb-2">
+
+                        <input class="form-check-input" type="checkbox" id="fair" name="fair" value="true"
+                            autocomplete="off">
+
+                        <label class="form-check-label" for="fair"><span style="color: #F8E0C5;">■</span> Fair</label>
+
+                    </div>
+
+                    <div class="form-check mb-2">
+
+                        <input class="form-check-input" type="checkbox" id="poor" name="poor" value="true"
+                            autocomplete="off">
+
+                        <label class="form-check-label" for="poor"><span style="color: #E4F0CB;">■</span> Poor</label>
+
+                    </div>
+
+
+                    <label for="judegement" class="form-label fw-bold">PROBAST + AI Tool Overall Judgement</label>
+
+                    <label for="overallQuality" class="form-label fw-bold">Overall Judgement of Quality</label>
+                    <select class="form-select mb-3" id="overallQuality" name="overallQuality" autocomplete="off">
+                        <option value="any" selected>Any</option>
+                        <option value="high">High concern regarding quality</option>
+                        <option value="low">Low concern regarding quality</option>
+                        <option value="unclear">Unclear concern regarding quality</option>
+                    </select>
+
+                    <label for="overallApplicability" class="form-label fw-bold">Overall Judgement of
+
+                        Applicability</label>
+
+                    <select class="form-select mb-3" id="overallApplicability" name="overallApplicability"
+                        autocomplete="off">
+
+                        <option value="any" selected>Any</option>
+
+                        <option value="high">High concern regarding applicability</option>
+
+                        <option value="low">Low concern regarding applicability</option>
+
+                        <option value="unclear">Unclear concern regarding applicability</option>
+
+                    </select>
+
+                    <label for="targetOutcome" class="form-label fw-bold">Target Outcome</label>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomeARDS" name="target_outcome"
+                            value="ARDS" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomeARDS">
+                            ARDS
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomeAtelectasis"
+                            name="target_outcome" value="Atelectasis" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomeAtelectasis">
+                            Atelectasis
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomePleuralEffusion"
+                            name="target_outcome" value="Pleural effusion" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomePleuralEffusion">
+                            Pleural effusion
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomePneumonia"
+                            name="target_outcome" value="Pneumonia" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomePneumonia">
+                            Pneumonia
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomePneumothorax"
+                            name="target_outcome" value="Pneumothorax" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomePneumothorax">
+                            Pneumothorax
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomePPCs" name="target_outcome"
+                            value="PPCs" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomePPCs">
+                            PPCs
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomePulmonaryEmbolism"
+                            name="target_outcome" value="Pulmonary embolism" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomePulmonaryEmbolism">
+                            Pulmonary embolism
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomeRespiratoryFailure"
+                            name="target_outcome" value="Respiratory failure" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomeRespiratoryFailure">
+                            Respiratory failure
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomeRespiratoryInfection"
+                            name="target_outcome" value="Respiratory infection" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomeRespiratoryInfection">
+                            Respiratory infection
+                        </label>
+                    </div>
+
+
+                    <label for="modelType" class="form-label fw-bold">Model Type</label>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="classicalMachineLearningModel"
+                            name="model_type" value="Classical Machine Learning Model" autocomplete="off">
+                        <label class="form-check-label" for="classicalMachineLearningModel">
+                            Classical Machine Learning Model
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="deepLearningModel" name="model_type"
+                            value="Deep Learning Model" autocomplete="off">
+                        <label class="form-check-label" for="deepLearningModel">
+                            Deep Learning Model
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="ensembleLearningModel" name="model_type"
+                            value="Ensemble Learning Model" autocomplete="off">
+                        <label class="form-check-label" for="ensembleLearningModel">Ensemble Learning Model</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="multimodelHybridLearningStrategy"
+                            name="model_type" value="Multi-Model / Hybrid Learning Strategy" autocomplete="off">
+                        <label class="form-check-label" for="multimodelHybridLearningStrategy">Multi-Model / Hybrid
+                            Learning Strategy</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="traditionalStatisticalModel"
+                            name="model_type" value="Traditional Statistical Model" autocomplete="off">
+                        <label class="form-check-label" for="traditionalStatisticalModel">
+                            Traditional Statistical Model
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="unclassifiedMethod" name="model_type"
+                            value="Unclassified Method" autocomplete="off">
+                        <label class="form-check-label" for="unclassifiedMethod">Unclassified Method</label>
+                    </div>
+
+                    <label for="timing_prediction" class="form-label fw-bold">Timing of Prediction</label>
+                    <select class="form-select mb-3" id="timing_prediction" name="timing_prediction" autocomplete="off">
+                        <option value="any" selected>Any</option>
+                        <option value="Preoperative">Preoperative</option>
+                        <option value="Intraoperative">Intraoperative</option>
+                        <option value="Postoperative">Postoperative</option>
+                    </select>
+
+                    <label for="clinical_application_modality" class="form-label fw-bold">Clinical Application
+                        Modality</label>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="nomogramBasedTool"
+                            name="application_modality" value="Nomogram-Based Tool" autocomplete="off">
+                        <label class="form-check-label" for="nomogramBasedTool">Nomogram-Based Tool</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="pointBasedRiskScore"
+                            name="application_modality" value="Point-Based Risk Score" autocomplete="off">
+                        <label class="form-check-label" for="pointBasedRiskScore">Point-Based Risk Score</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="digitalImplementationTool"
+                            name="application_modality" value="Digital Implementation Tool" autocomplete="off">
+                        <label class="form-check-label" for="digitalImplementationTool">Digital Implementation
+                            Tool</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="algorithmOnlyModel"
+                            name="application_modality" value="Algorithm-Only Model" autocomplete="off">
+                        <label class="form-check-label" for="algorithmOnlyModel">Algorithm-Only Model</label>
+                    </div>
+
+
+                    <button type="button" class="btn btn-outline-secondary w-100" onclick="resetFilters()">
+
+                        <i class="fas fa-undo"></i> Reset
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-9 col-sm-12">
+
+            {% include 'browse/partials/development_list.html' %}
+        </div>
+
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.24.1/bootstrap-table.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js"></script>
+<script src="{{ url_for('static', filename='Scripts/browse.js') }}"></script>
+
+
+<script src="{{ url_for('static', filename='Scripts/development.js') }}"></script>
+
+{% endblock script %}

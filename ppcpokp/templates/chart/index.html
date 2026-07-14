@@ -1,0 +1,1257 @@
+{% extends "base.html" %}
+{% block title %}
+Statistics of Protocols
+{% endblock title %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.24.1/bootstrap-table.min.css"
+    onerror="this.onerror=function(){this.onerror=null;this.href='https://unpkg.com/bootstrap-table@1.24.1/dist/bootstrap-table.min.css';};this.href='https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/bootstrap-table.min.css';" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}" />
+<style>
+    .loading {
+        text-align: center;
+        padding: 20px;
+        color: #7f8c8d;
+    }
+
+    #model-year-chart {
+        width: 100%;
+        height: 500px;
+    }
+
+    #country-top5-chart {
+        width: 100%;
+        height: 400px;
+        margin-top: 30px;
+    }
+
+    #wordcloud-chart {
+        width: 100%;
+        height: 600px;
+        margin-top: 30px;
+    }
+
+    #sankey-chart {
+        width: 100%;
+        height: 600px;
+        margin-top: 30px;
+    }
+
+    #coauthor-chart {
+        width: 100%;
+        height: 600px;
+        margin-top: 30px;
+    }
+
+    #heatmap-chart {
+        width: 100%;
+        height: 600px;
+        margin-top: 30px;
+    }
+
+    #model-subgroup-treemap {
+        width: 100%;
+        height: 600px;
+        margin-top: 30px;
+    }
+
+    #variable-percent-stack {
+        width: 100%;
+        height: 600px;
+        margin-top: 30px;
+    }
+
+    #evidence-quality-chart {
+        width: 100%;
+        height: 600px;
+        margin-top: 30px;
+    }
+</style>
+
+<div class="container">
+
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mt-2 mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('index.index') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Statistics</li>
+        </ol>
+    </nav>
+
+    <div class="content">
+
+        <div class="container">
+            <!-- 原有折线图 -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div>
+                        <div id="model-year-chart">
+                            <div class="loading">Loading year model data...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 新增国家横向条形图（前5） -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div>
+                        <div id="country-top5-chart">
+                            <div class="loading">Loading country data...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增合作网络图 -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div>
+                        <div id="coauthor-chart">
+                            <div class="loading">Loading coauthor network...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增词云图 -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div>
+                        <div id="wordcloud-chart">
+                            <div class="loading">Loading word cloud...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增桑基图 -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div>
+                        <div id="sankey-chart">
+                            <div class="loading">Loading Sankey diagram...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增热图 -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div>
+                        <div id="heatmap-chart">
+                            <div class="loading">Loading performance heatmap...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增模型亚分类矩形树图 -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div>
+                        <div id="model-subgroup-treemap">
+                            <div class="loading">Loading model subgroup treemap...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增模型变量百分比堆叠柱状图 -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div>
+                        <div id="variable-percent-stack">
+                            <div class="loading">Loading variable percent stack...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增证据质量堆叠柱状图 -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div>
+                        <div id="evidence-quality-chart">
+                            <div class="loading">Loading evidence quality chart...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts-wordcloud/2.1.0/echarts-wordcloud.min.js"
+    onerror="this.onerror=function(){this.onerror=null;this.src='https://unpkg.com/echarts-wordcloud@2.1.0/dist/echarts-wordcloud.min.js';};this.src='https://cdn.jsdelivr.net/npm/echarts-wordcloud@2.1.0/dist/echarts-wordcloud.min.js';"></script>
+<script type="text/javascript">
+    // 页面加载完成后执行
+    document.addEventListener('DOMContentLoaded', function () {
+        loadModelYearChart();
+        loadCountryTop5Chart();
+        loadWordCloud();
+        loadSankeyChart();
+        loadCoauthorNetworkChart();
+        loadHeatmapChart();
+        loadModelSubgroupTreemap();
+        loadVariablePercentStack();
+        loadEvidenceQualityChart();
+    });
+
+    // 从后端获取数据并渲染折线图
+    function loadModelYearChart() {
+        const chartDom = document.getElementById('model-year-chart');
+
+        if (!chartDom) {
+            return;
+        }
+
+        chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#666;font-size:16px;">Loading data...</div>';
+
+        fetch('/chart/year-model-data')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response error: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    chartDom.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Data loading failed: ${data.error}</div>`;
+                    return;
+                }
+
+                const chartData = data;
+
+                if (!chartData.years || !chartData.series) {
+                    chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Data format error</div>';
+                    return;
+                }
+
+                chartDom.innerHTML = '';
+
+                if (typeof echarts === 'undefined') {
+                    chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">ECharts library failed to load</div>';
+                    return;
+                }
+
+                const myChart = echarts.init(chartDom);
+                const years = chartData.years;
+                const series = chartData.series;
+                const modelTypes = chartData.model_types;
+
+                const option = {
+                    title: {
+                        text: 'Annual Publication Trends of Prediction Models by Model Type',
+                        left: 'center',
+                        textStyle: {
+                            fontSize: 20,
+                            fontWeight: 'bold',
+                            color: '#333'
+                        },
+                        top: 10
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        },
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        borderColor: '#ccc',
+                        borderWidth: 1,
+                        textStyle: {
+                            color: '#333'
+                        },
+                        formatter: function (params) {
+                            let result = `<div style="margin-bottom:8px;font-weight:bold;font-size:14px;">${params[0].name}</div>`;
+                            let total = 0;
+
+                            params.forEach(item => {
+                                if (item.value > 0) {
+                                    result += `<div style="display:flex;align-items:center;margin-bottom:4px;">
+                                        <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background-color:${item.color};margin-right:8px;"></span>
+                                        <span style="flex:1;font-size:13px;">${item.seriesName}:</span>
+                                        <span style="font-weight:bold;font-size:13px;">${item.value}</span>
+                                    </div>`;
+                                    total += item.value;
+                                }
+                            });
+
+                            result += `<hr style="margin:10px 0;border:none;border-top:1px solid #ddd;" />
+                                <div style="display:flex;justify-content:space-between;font-size:13px;">
+                                    <span>Total:</span>
+                                    <span style="font-weight:bold;">${total}</span>
+                                </div>`;
+
+                            return result;
+                        }
+                    },
+                    legend: {
+                        type: 'scroll',
+                        orient: 'vertical',
+                        right: 10,
+                        top: 'center',
+                        data: modelTypes,
+                        itemGap: 10,
+                        textStyle: {
+                            fontSize: 11
+                        },
+                        pageTextStyle: {
+                            color: '#666'
+                        },
+                        height: '70%'
+                    },
+                    grid: {
+                        left: 60,
+                        right: 280,
+                        bottom: 60,
+                        top: 120,
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: true,
+                        name: 'Year',
+                        nameLocation: 'middle',
+                        nameGap: 30,
+                        nameTextStyle: {
+                            fontSize: 14,
+                            fontWeight: 'bold'
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#999'
+                            }
+                        },
+                        axisTick: {
+                            alignWithLabel: true
+                        },
+                        axisLabel: {
+                            color: '#666',
+                            fontSize: 12,
+                            rotate: 45
+                        },
+                        data: years
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: 'Number of Models',
+                        nameTextStyle: {
+                            fontSize: 14,
+                            fontWeight: 'bold'
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#999'
+                            }
+                        },
+                        axisLabel: {
+                            color: '#666',
+                            fontSize: 12
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: '#f0f0f0',
+                                type: 'solid'
+                            }
+                        }
+                    },
+                    series: series
+                };
+
+                myChart.setOption(option);
+
+                window.addEventListener('resize', function () {
+                    if (myChart && !myChart.isDisposed()) {
+                        myChart.resize();
+                    }
+                });
+
+            })
+            .catch(error => {
+                chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Data loading failed, please check network connection</div>';
+            });
+    }
+
+    function loadCountryTop5Chart() {
+        const chartDom = document.getElementById('country-top5-chart');
+        if (!chartDom) return;
+
+        chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#666;font-size:16px;">Loading country data...</div>';
+
+        fetch('/chart/country-top5-data')
+            .then(response => {
+                if (!response.ok) throw new Error('Network response error: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    chartDom.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Country data loading failed: ${data.error}</div>`;
+                    return;
+                }
+
+                if (!data.countries || !data.counts) {
+                    chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Country data format error</div>';
+                    return;
+                }
+
+                // 确保按数量降序排列（最多在最前面）
+                const combined = data.countries.map((country, index) => ({
+                    country: country,
+                    count: data.counts[index]
+                }));
+                combined.sort((a, b) => b.count - a.count);
+                const sortedCountries = combined.map(item => item.country);
+                const sortedCounts = combined.map(item => item.count);
+
+                chartDom.innerHTML = '';
+
+                if (typeof echarts === 'undefined') {
+                    chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">ECharts library failed to load</div>';
+                    return;
+                }
+
+                const myChart = echarts.init(chartDom);
+
+                const option = {
+                    title: {
+                        text: 'Top Five Countries Contributing Published Prediction Models',
+                        left: 'center',
+                        textStyle: { fontSize: 18, fontWeight: 'bold', color: '#333' },
+                        top: 10
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: { type: 'shadow' },
+                        formatter: params => params[0].name + '<br/>Number of models: ' + params[0].value
+                    },
+                    grid: {
+                        left: '15%',
+                        right: '8%',
+                        bottom: '10%',
+                        top: '18%',
+                        containLabel: false
+                    },
+                    xAxis: {
+                        type: 'value',
+                        name: 'Number of Models',
+                        nameTextStyle: { fontSize: 13, fontWeight: 'bold' },
+                        axisLabel: { fontSize: 11 },
+                        splitLine: { lineStyle: { color: '#f0f0f0' } }
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: sortedCountries,
+                        inverse: true,          // 关键：使第一个元素（最多）显示在顶部
+                        name: 'Country',
+                        nameTextStyle: { fontSize: 13, fontWeight: 'bold' },
+                        axisLabel: { fontSize: 11 },
+                        axisLine: { lineStyle: { color: '#999' } }
+                    },
+                    series: [{
+                        name: 'Model Count',
+                        type: 'bar',
+                        data: sortedCounts.map((count, idx) => ({
+                            value: count,
+                            itemStyle: {
+                                color: ['#EAAA60', '#E68B81', '#B7B2D0', '#7DA6C6', '#84C3B7'][idx],
+                                borderRadius: [0, 4, 4, 0]   // 保持圆角效果
+                            }
+                        })),
+                        barWidth: '60%',
+                        label: { show: true, position: 'right', fontSize: 11, fontWeight: 'bold' }
+                    }]
+                };
+
+                myChart.setOption(option);
+
+                window.addEventListener('resize', () => {
+                    if (myChart && !myChart.isDisposed()) myChart.resize();
+                });
+            })
+            .catch(() => {
+                chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Country data loading failed</div>';
+            });
+    }
+
+    function loadCoauthorNetworkChart() {
+        const chartDom = document.getElementById('coauthor-chart');
+        if (!chartDom) return;
+
+        chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#666;font-size:16px;">Loading coauthor network...</div>';
+
+        fetch('/chart/coauthor-network?min_cooperation=2')
+            .then(response => {
+                if (!response.ok) throw new Error('Network error: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    chartDom.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Coauthor network failed: ${data.error}</div>`;
+                    return;
+                }
+
+                if (!data.nodes || data.nodes.length === 0) {
+                    chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">No coauthor data</div>';
+                    return;
+                }
+
+                chartDom.innerHTML = '';
+                const myChart = echarts.init(chartDom);
+
+                const option = {
+                    title: {
+                        text: 'Collaborative Clusters in the Co‑authorship Network of Researchers',
+                        left: 'center',
+                        textStyle: { fontSize: 20, fontWeight: 'bold', color: '#333' },
+                        top: 10
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: function (params) {
+                            if (params.dataType === 'node') {
+                                return params.name + '<br/>Collaborations: ' + params.value;
+                            } else {
+                                return params.data.source + ' → ' + params.data.target + '<br/>Co-authorships: ' + params.data.value;
+                            }
+                        }
+                    },
+                    toolbox: {
+                        show: true,
+                        orient: 'vertical',
+                        left: 'right',
+                        top: 'center',
+                        feature: {
+                            restore: { show: true, title: 'Reset View' },
+                            saveAsImage: { show: true, title: 'Save as Image' }
+                        }
+                    },
+                    series: [{
+                        type: 'graph',
+                        layout: 'force',
+                        symbolSize: 20,
+                        roam: true,
+                        label: {
+                            show: true,
+                            position: 'right',
+                            fontSize: 10
+                        },
+                        // 移除 edgeSymbol 和 edgeLabel，默认无箭头
+                        force: {
+                            repulsion: 1000,
+                            edgeLength: 150,
+                            layoutAnimation: true
+                        },
+                        data: data.nodes,
+                        links: data.links,
+                        categories: data.categories,
+                        lineStyle: {
+                            color: 'source',
+                            curveness: 0.3,
+                            width: 2
+                        },
+                        emphasis: {
+                            focus: 'adjacency',
+                            lineStyle: { width: 3 }
+                        }
+                    }]
+                };
+
+                myChart.setOption(option);
+
+                window.addEventListener('resize', () => {
+                    if (myChart && !myChart.isDisposed()) myChart.resize();
+                });
+            })
+            .catch(() => {
+                chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Coauthor network loading failed</div>';
+            });
+    }
+
+    // 从后端获取数据并渲染词云图
+    function loadWordCloud() {
+        const chartDom = document.getElementById('wordcloud-chart');
+        if (!chartDom) return;
+
+        chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#666;font-size:16px;">Loading word cloud...</div>';
+
+        fetch('/chart/wordcloud-data')
+            .then(response => {
+                if (!response.ok) throw new Error('Network error: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    chartDom.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Word cloud failed: ${data.error}</div>`;
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">No words available</div>';
+                    return;
+                }
+
+                chartDom.innerHTML = '';
+                const myChart = echarts.init(chartDom);
+
+                const option = {
+                    title: {
+                        text: 'Word Cloud of Keywords from Study Abstracts',
+                        left: 'center',
+                        textStyle: { fontSize: 20, fontWeight: 'bold', color: '#333' },
+                        top: 10
+                    },
+                    tooltip: {
+                        show: true,
+                        formatter: params => `${params.name}: ${params.value}`
+                    },
+                    series: [{
+                        type: 'wordCloud',
+                        shape: 'circle',          // 词云形状：circle, cardioid, diamond 等
+                        width: '90%',
+                        height: '80%',
+                        right: null,
+                        bottom: null,
+                        sizeRange: [12, 60],       // 字体大小范围
+                        rotationRange: [-90, 90],
+                        rotationStep: 45,
+                        gridSize: 8,
+                        drawOutOfBound: false,
+                        layoutAnimation: true,
+                        textStyle: {
+                            fontFamily: 'Arial, sans-serif',
+                            fontWeight: 'bold',
+                            color: function () {
+                                // 随机颜色
+                                return 'rgb(' + [
+                                    Math.round(Math.random() * 160 + 50),
+                                    Math.round(Math.random() * 160 + 50),
+                                    Math.round(Math.random() * 160 + 50)
+                                ].join(',') + ')';
+                            }
+                        },
+                        emphasis: {
+                            focus: 'self',
+                            textStyle: {
+                                textShadow: 'blur(2px) color(black)'
+                            }
+                        },
+                        data: data
+                    }]
+                };
+
+                myChart.setOption(option);
+
+                window.addEventListener('resize', () => {
+                    if (myChart && !myChart.isDisposed()) myChart.resize();
+                });
+            })
+            .catch(() => {
+                chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Word cloud loading failed</div>';
+            });
+    }
+
+    function loadSankeyChart() {
+        const chartDom = document.getElementById('sankey-chart');
+        if (!chartDom) return;
+
+        chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#666;font-size:16px;">Loading Sankey diagram...</div>';
+
+        fetch('/chart/sankey-data')
+            .then(response => {
+                if (!response.ok) throw new Error('Network error: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    chartDom.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Sankey data failed: ${data.error}</div>`;
+                    return;
+                }
+
+                if (!data.nodes || !data.links || data.nodes.length === 0) {
+                    chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">No data available</div>';
+                    return;
+                }
+
+                chartDom.innerHTML = '';
+                const myChart = echarts.init(chartDom);
+
+                // 可选：为不同层设置不同的颜色
+                const colors = ['#5470c6', '#91cc75', '#fac858', '#ee6666'];
+                const option = {
+                    title: {
+                        text: 'Sankey Diagram Mapping the Structure of Prediction Models\nAcross Surgical Contexts, Prediction Stages, Outcomes, and Model Types',
+                        left: 'center',
+                        textStyle: { fontSize: 20, fontWeight: 'bold', color: '#333' },
+                        top: 0
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        triggerOn: 'mousemove',
+                        formatter: function (params) {
+                            if (params.dataType === 'node') {
+                                return params.name;
+                            } else {
+                                return params.data.source + ' → ' + params.data.target + '<br/>Count: ' + params.data.value;
+                            }
+                        }
+                    },
+                    series: [{
+                        type: 'sankey',
+                        layout: 'none',
+                        focusNodeAdjacency: 'allEdges',
+                        data: data.nodes,
+                        links: data.links,
+                        nodeAlign: 'left',
+                        lineStyle: {
+                            color: 'source',
+                            curveness: 0.5,
+                            opacity: 0.3
+                        },
+                        label: {
+                            show: true,
+                            position: 'right',
+                            fontSize: 10
+                        },
+                        emphasis: {
+                            focus: 'adjacency'
+                        },
+                        top: '15%'
+                    }]
+                };
+
+                myChart.setOption(option);
+
+                window.addEventListener('resize', () => {
+                    if (myChart && !myChart.isDisposed()) myChart.resize();
+                });
+            })
+            .catch(() => {
+                chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Sankey diagram loading failed</div>';
+            });
+    }
+
+    function loadHeatmapChart() {
+        const chartDom = document.getElementById('heatmap-chart');
+        if (!chartDom) return;
+
+        chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#666;font-size:16px;">Loading heatmap...</div>';
+
+        fetch('/chart/heatmap-data')
+            .then(response => {
+                if (!response.ok) throw new Error('Network error: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    chartDom.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Heatmap failed: ${data.error}</div>`;
+                    return;
+                }
+
+                if (!data.xAxis || !data.yAxis || !data.data) {
+                    chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Data format error</div>';
+                    return;
+                }
+
+                chartDom.innerHTML = '';
+                const myChart = echarts.init(chartDom);
+
+                const option = {
+                    title: {
+                        text: 'Heatmap of Median AUC Across Model Types and Clinical Application Modalities',
+                        left: 'center',
+                        textStyle: { fontSize: 20, fontWeight: 'bold', color: '#333' },
+                        top: 10
+                    },
+                    tooltip: {
+                        trigger: 'item', textStyle: { color: '#ffffff' },
+                        formatter: function (params) {
+                            const d = params.data;
+                            if (!d || d.count === 0) return 'No data';
+                            const xIdx = d.value[0];
+                            const yIdx = d.value[1];
+                            const xName = params.component.subOptions.xAxis[0].data[xIdx];
+                            const yName = params.component.subOptions.yAxis[0].data[yIdx];
+                            const median = d.value[2];
+                            if (median === -1) {
+                                return `${yName} × ${xName}<br/>No valid AUC<br/>N = ${d.count}`;
+                            }
+                            return `${yName} × ${xName}<br/>Median AUC = ${median.toFixed(3)}<br/>N = ${d.count}`;
+                        }
+                    },
+                    grid: {
+                        left: '12%',
+                        right: '12%',
+                        bottom: '10%',
+                        top: '18%',
+                        containLabel: false
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: data.xAxis,
+                        name: 'Clinical Application Modalities',
+                        nameLocation: 'middle',
+                        nameGap: 30,
+                        nameTextStyle: { fontSize: 13, fontWeight: 'bold' },
+                        axisLabel: { rotate: 45, fontSize: 11 },
+                        splitArea: { show: true }
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: data.yAxis,
+                        name: 'Model Type',
+                        nameTextStyle: { fontSize: 13, fontWeight: 'bold' },
+                        axisLabel: { fontSize: 11 },
+                        splitArea: { show: true }
+                    },
+                    visualMap: {
+                        min: 0,
+                        max: 1,
+                        orient: 'vertical',
+                        right: '2%',
+                        y: 'center',
+                        inRange: {
+                            color: ['#d3d3d3', '#f5f8fa', '#bfdae9', '#89bed9', '#408fbf', '#2165aa', '#073162']   // 蓝色系渐变
+                        },
+                        outOfRange: {
+                            color: '#d3d3d3'   // 浅灰色
+                        },
+                        text: ['AUC = 1', 'AUC = 0'],
+                        textStyle: { fontSize: 12 }
+                        // 不设置 calculable，默认无滑块
+                    },
+                    series: [{
+                        name: 'Median AUC',
+                        type: 'heatmap',
+                        data: data.data,
+                        label: {
+                            show: true,
+                            position: 'inside',
+                            formatter: function (params) {
+                                const d = params.data;
+                                if (d.count === 0) return '';
+                                const val = d.value[2];
+                                if (val === -1) return 'No AUC\nN=' + d.count;
+                                return 'Median AUC = ' + val.toFixed(3) + '\nN=' + d.count;
+                            },
+                            fontSize: 11,
+                            fontWeight: 'bold',
+                            color: '#ffffff',
+                            textShadowBlur: 3,
+                            textShadowColor: '#333'
+                        },
+                        itemStyle: {
+                            borderColor: '#666',
+                            borderWidth: 1
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                borderColor: '#000',
+                                borderWidth: 2
+                            }
+                        }
+                    }]
+                };
+
+                myChart.setOption(option);
+                myChart.resize();
+
+                window.addEventListener('resize', () => {
+                    if (myChart && !myChart.isDisposed()) myChart.resize();
+                });
+            })
+            .catch(() => {
+                chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Heatmap loading failed</div>';
+            });
+    }
+
+    function loadModelSubgroupTreemap() {
+        const chartDom = document.getElementById('model-subgroup-treemap');
+        if (!chartDom) return;
+
+        chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#666;font-size:16px;">Loading treemap...</div>';
+
+        fetch('/chart/model-subgroup-treemap')
+            .then(response => {
+                if (!response.ok) throw new Error('Network error: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    chartDom.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Treemap failed: ${data.error}</div>`;
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">No data available</div>';
+                    return;
+                }
+
+                chartDom.innerHTML = '';
+                const myChart = echarts.init(chartDom);
+
+                const option = {
+                    title: {
+                        text: 'Treemap of Prediction Model Types and Subtypes',
+                        left: 'center',
+                        textStyle: { fontSize: 20, fontWeight: 'bold', color: '#333' },
+                        top: 10
+                    },
+                    tooltip: {
+                        formatter: function (params) {
+                            const path = params.treePathInfo.map(p => p.name).join(' > ');
+                            return `${path}<br/>Count: ${params.value}`;
+                        }
+                    },
+                    series: [{
+                        type: 'treemap',
+                        data: data,
+                        width: '100%',
+                        height: '90%',
+                        roam: true,
+                        nodeClick: 'zoomToNode',
+                        breadcrumb: {
+                            show: true,
+                            left: 'center',
+                            top: 'bottom',
+                            emptyItemWidth: 25
+                        },
+                        levels: [
+                            {
+                                // 第一层：大类（不显示颜色，仅用于分组）
+                                itemStyle: {
+                                    borderColor: '#555',
+                                    borderWidth: 2,
+                                    gapWidth: 2
+                                }
+                            },
+                            {
+                                // 第二层：亚分类（使用从数据中传递的颜色）
+                                itemStyle: {
+                                    borderColor: '#666',
+                                    borderWidth: 1,
+                                    gapWidth: 1
+                                },
+                                colorMappingBy: 'dataItem'  // 使用数据项自身指定的颜色
+                            }
+                        ]
+                    }]
+                };
+
+                myChart.setOption(option);
+
+                window.addEventListener('resize', () => {
+                    if (myChart && !myChart.isDisposed()) myChart.resize();
+                });
+            })
+            .catch(() => {
+                chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Treemap loading failed</div>';
+            });
+    }
+
+    function loadVariablePercentStack() {
+        const chartDom = document.getElementById('variable-percent-stack');
+        if (!chartDom) return;
+
+        chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#666;font-size:16px;">Loading variable percentage stack...</div>';
+
+        fetch('/chart/variable-percent-stack')
+            .then(response => {
+                if (!response.ok) throw new Error('Network error: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    chartDom.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Failed: ${data.error}</div>`;
+                    return;
+                }
+
+                if (!data.model_types || data.model_types.length === 0) {
+                    chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">No data available</div>';
+                    return;
+                }
+
+                // ========== 1. 按总数从高到低排序模型类型 ==========
+                let sortedModelTypes = [...data.model_types];
+                let sortedSeriesData = data.series.map(series => ({ ...series, data: [...series.data] }));
+                let totalsArray = data.model_type_totals;  // 假设后端返回字段 model_type_totals，与 model_types 一一对应
+
+                if (totalsArray && Array.isArray(totalsArray) && totalsArray.length === data.model_types.length) {
+                    // 生成排序索引（降序：总数高的排在前面）
+                    const indices = Array.from(Array(data.model_types.length).keys());
+                    indices.sort((a, b) => totalsArray[b] - totalsArray[a]);
+
+                    // 重新排列 model_types
+                    sortedModelTypes = indices.map(idx => data.model_types[idx]);
+
+                    // 重新排列每个系列的数据
+                    sortedSeriesData = data.series.map(series => ({
+                        ...series,
+                        data: indices.map(idx => series.data[idx])
+                    }));
+
+                    // 重新排列 totals 数组（仅用于后续生成标签，可选）
+                    const sortedTotals = indices.map(idx => totalsArray[idx]);
+
+                    // 生成带总数标签的 Y 轴类别名称
+                    const formatNumber = (num) => num.toLocaleString(); // 添加千位分隔符
+                    sortedModelTypes = sortedModelTypes.map((type, idx) => `${type} (总数: ${formatNumber(sortedTotals[idx])})`);
+                } else {
+                    // 无总量数据时，保持原顺序，控制台提示但不影响显示
+                    console.warn('未提供 model_type_totals 字段或长度不匹配，保持原始顺序');
+                }
+                // ===================================================
+
+                chartDom.innerHTML = '';
+                const myChart = echarts.init(chartDom);
+
+                // ========== 自定义调色板 ==========
+                const colorPalette = [
+                    '#B0D5DF', '#BECBDE', '#C5C3E8', '#D8C4E9', '#EAC7D8',
+                    '#EBC0C1', '#BED8D5', '#C0DFB5', '#C7D097', '#E3D6AC',
+                    '#F6C299', '#D8CAC1'
+                ];
+                // =================================
+
+                // 为每个系列按索引赋予颜色
+                const seriesWithColor = sortedSeriesData.map((s, idx) => ({
+                    ...s,
+                    type: 'bar',
+                    stack: 'percent',
+                    barWidth: '70%',
+                    color: colorPalette[idx % colorPalette.length],
+                    label: {
+                        show: true,
+                        position: 'inside',
+                        formatter: function (params) {
+                            if (params.value === 0) return '';
+                            return params.value.toFixed(2) + '%';
+                        },
+                        fontSize: 10,
+                        color: '#fff'
+                    }
+                }));
+
+                const option = {
+                    title: {
+                        text: 'Distribution of Variable Categories Within Model Types',
+                        left: 'center',
+                        textStyle: { fontSize: 20, fontWeight: 'bold', color: '#333' },
+                        top: 10
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: { type: 'shadow' },
+                        formatter: function (params) {
+                            let res = params[0].name + '<br/>';
+                            let total = 0;
+                            params.forEach(p => {
+                                res += `${p.marker} ${p.seriesName}: ${p.value.toFixed(2)}%<br/>`;
+                                total += p.value;
+                            });
+                            res += `<b>Total: ${total.toFixed(2)}%</b>`;
+                            return res;
+                        }
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        right: 10,
+                        top: 'center',
+                        itemGap: 10,
+                        textStyle: { fontSize: 11 }
+                    },
+                    grid: {
+                        left: '15%',
+                        right: '15%',
+                        bottom: '8%',
+                        top: '15%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'value',
+                        name: 'Percentage (%)',
+                        nameLocation: 'middle',
+                        nameGap: 30,
+                        nameTextStyle: { fontSize: 13, fontWeight: 'bold' },
+                        axisLabel: { fontSize: 11 },
+                        max: 100,
+                        splitLine: { lineStyle: { color: '#f0f0f0' } }
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: sortedModelTypes,   // 使用排序后（可能附带总数）的标签
+                        name: 'Model Type',
+                        nameTextStyle: { fontSize: 13, fontWeight: 'bold' },
+                        axisLabel: { fontSize: 11, overflow: 'break', width: 150 }, // 避免过长标签溢出
+                        axisLine: { lineStyle: { color: '#999' } }
+                    },
+                    series: seriesWithColor
+                };
+
+                myChart.setOption(option);
+                window.addEventListener('resize', () => {
+                    if (myChart && !myChart.isDisposed()) myChart.resize();
+                });
+            })
+            .catch(() => {
+                chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Variable percentage stack loading failed</div>';
+            });
+    }
+
+    function loadEvidenceQualityChart() {
+        const chartDom = document.getElementById('evidence-quality-chart');
+        if (!chartDom) return;
+
+        // 辅助函数：添加或更新图注
+        function updateFigureCaption() {
+            const captionId = 'evidence-quality-caption';
+            let captionDiv = document.getElementById(captionId);
+            if (!captionDiv) {
+                captionDiv = document.createElement('div');
+                captionDiv.id = captionId;
+                captionDiv.style.cssText = 'font-size: 12px; color: #555; text-align: left; margin-top: 12px; line-height: 1.4; max-width: 100%; border-top: 1px solid #eee; padding-top: 8px;';
+                // 插入到 chartDom 的父元素中，位于 chartDom 之后
+                chartDom.parentNode.insertBefore(captionDiv, chartDom.nextSibling);
+            }
+            captionDiv.innerHTML = `<i>Abbreviations</i>: <b>H</b> = High concern; <b>U</b> = Unclear concern; <b>L</b> = Low concern. The first letter denotes concern regarding <b>quality</b>; the second letter denotes concern for <b>applicability</b> under PROBAST+AI. Each horizontal bar represents a PROBAST+AI category and is normalized to 100%, showing the percentage distribution across grades of the Novel Prediction Model Score System (Excellent, Good, Fair, Poor).`;
+        }
+
+        function removeFigureCaption() {
+            const captionDiv = document.getElementById('evidence-quality-caption');
+            if (captionDiv) captionDiv.remove();
+        }
+
+        chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#666;font-size:16px;">Loading evidence quality chart...</div>';
+        removeFigureCaption(); // 加载新图表前清除旧图注
+
+        fetch('/chart/evidence-quality')
+            .then(response => {
+                if (!response.ok) throw new Error('Network error: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    chartDom.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Failed: ${data.error}</div>`;
+                    return;
+                }
+
+                if (!data.categories || data.categories.length === 0) {
+                    chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">No data available</div>';
+                    return;
+                }
+
+                // 反转分类顺序，使 High-High 显示在最上方（ECharts 默认第一个在底部）
+                const rawCategories = data.categories;
+                const categories = rawCategories.slice().reverse();
+
+                // 计算每个分类的总数
+                const totals = categories.map(cat => {
+                    const idx = rawCategories.indexOf(cat);
+                    return data.series.reduce((sum, s) => sum + (s.data[idx] || 0), 0);
+                });
+
+                // 存储原始数量用于 tooltip（顺序与反转后的 categories 对应）
+                const originalCounts = data.series.map(s => s.data.slice().reverse());
+
+                // 构建系列数据，并计算百分比
+                const series = data.series.map((s, seriesIdx) => {
+                    const rawData = s.data.slice().reverse();
+                    const percentData = rawData.map((count, i) => {
+                        const total = totals[i];
+                        return total === 0 ? 0 : (count / total) * 100;
+                    });
+                    return {
+                        name: s.name,
+                        type: 'bar',
+                        stack: 'quality',
+                        data: percentData,
+                        itemStyle: s.itemStyle
+                    };
+                });
+
+                chartDom.innerHTML = '';
+                const myChart = echarts.init(chartDom);
+
+                const option = {
+                    title: {
+                        text: 'Composite Assessment of Prediction Models via PROBAST+AI and a Novel Prediction Model Score System',
+                        left: 'center',
+                        textStyle: { fontSize: 20, fontWeight: 'bold', color: '#333' },
+                        top: 10
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: { type: 'shadow' },
+                        formatter: function (params) {
+                            const catIndex = params[0].dataIndex;
+                            const catName = categories[catIndex];
+                            const total = totals[catIndex];
+                            let res = `${catName} (Total: ${total})<br/>`;
+                            let totalPercent = 0;
+                            params.forEach((p, idx) => {
+                                const percent = p.value;
+                                const count = originalCounts[idx][catIndex];
+                                res += `${p.marker} ${p.seriesName}: ${percent.toFixed(1)}% (${count})<br/>`;
+                                totalPercent += percent;
+                            });
+                            res += `<b>Total: ${totalPercent.toFixed(1)}%</b>`;
+                            return res;
+                        }
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        right: 10,
+                        top: 'center',
+                        itemGap: 10,
+                        textStyle: { fontSize: 11 }
+                    },
+                    grid: {
+                        left: '15%',
+                        right: '15%',
+                        bottom: '8%',
+                        top: '15%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'value',
+                        name: 'Percentage of the Prediction Model Score System (%)',
+                        nameLocation: 'middle',
+                        nameGap: 30,
+                        nameTextStyle: { fontSize: 13, fontWeight: 'bold' },
+                        axisLabel: { fontSize: 11 },
+                        max: 100,
+                        splitLine: { lineStyle: { color: '#f0f0f0' } }
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: categories,
+                        name: 'PROBAST+AI Category (Quality concern, Applicability concern)',
+                        nameTextStyle: { fontSize: 13, fontWeight: 'bold' },
+                        axisLabel: {
+                            fontSize: 11,
+                            formatter: function (value, index) {
+                                return value + ' (N=' + totals[index] + ')';
+                            }
+                        },
+                        axisLine: { lineStyle: { color: '#999' } }
+                    },
+                    series: series
+                };
+
+                myChart.setOption(option);
+                // 图表渲染成功后添加图注
+                updateFigureCaption();
+
+                window.addEventListener('resize', () => {
+                    if (myChart && !myChart.isDisposed()) myChart.resize();
+                });
+            })
+            .catch(() => {
+                chartDom.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100%;color:#f00;font-size:16px;">Evidence quality chart loading failed</div>';
+                removeFigureCaption();
+            });
+    }
+</script>
+{% endblock script %}

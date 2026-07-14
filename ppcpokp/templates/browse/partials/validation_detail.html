@@ -1,0 +1,637 @@
+<div id="detail">
+    <table class="table table-striped mb-4" data-modal-title="ID: {{ detail.id }} - Detail">
+
+        <!-- Study模块 -->
+        <tbody>
+            <tr>
+                <td colspan="2" class="p-0">
+                    <div class="accordion" id="accordionStudy">
+                        <div class="accordion-item border-0">
+                            <h2 class="accordion-header" id="headingStudy">
+                                <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#study-section" aria-expanded="false" aria-controls="study-section">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <span>Study Information</span>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="study-section" class="accordion-collapse collapse" aria-labelledby="headingStudy">
+                                <div class="accordion-body p-0">
+                                    <table class="table table-borderless table-hover table-striped mb-0">
+                                        <tbody>
+                                            <tr height="35">
+                                                <td class="item-name">Title</td>
+                                                <td>{{ detail['title'] | default('NA', boolean=True) }}
+                                                    <br>
+                                                    {% if detail['pmid'] %}
+                                                    <span class="badge bg-primary">
+                                                        <a href="https://pubmed.ncbi.nlm.nih.gov/{{ detail['pmid'] }}"
+                                                            target="_blank" class="text-white text-decoration-none">
+                                                            PMID: {{ detail['pmid'] }}
+                                                            <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                                        </a>
+                                                    </span>
+                                                    {% endif %}
+                                                    {% if detail['doi'] %}
+                                                    <span class="badge bg-primary">
+                                                        <a href="https://doi.org/{{ detail['doi'] }}" target="_blank"
+                                                            class="text-white text-decoration-none">
+                                                            DOI: {{ detail['doi'] }}
+                                                            <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                                        </a>
+                                                    </span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Authors</td>
+                                                <td>{{ detail['authors'] }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Corresponding Author</td>
+                                                <td>{{ detail['corresponding_author'] }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Journal</td>
+                                                <td>{{ detail['journal_name'] }}
+                                                    <br>
+                                                    {% if detail['journal_issn'] %}
+                                                    <span class="badge bg-info">ISSN: {{ detail['journal_issn']
+                                                        }}</span>
+                                                    {% endif %}
+                                                    {% if detail['impact_factor'] %}
+                                                    <span class="badge bg-info">IF: {{ detail['impact_factor'] }}</span>
+                                                    {% endif %}
+                                                    {% if detail['jcr'] %}
+                                                    <span class="badge bg-info">JCR: {{ detail['jcr'] }}</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Publication</td>
+                                                <td>
+                                                    {% if detail['publication_year'] %}
+                                                    <span class="badge bg-info">Year: {{ detail['publication_year']
+                                                        }}</span>
+                                                    {% endif %}
+                                                    {% if detail['volunme_number'] %}
+                                                    <span class="badge bg-info">Volume: {{ detail['volunme_number']
+                                                        }}</span>
+                                                    {% endif %}
+                                                    {% if detail['issue_number'] %}
+                                                    <span class="badge bg-info">Issue: {{ detail['issue_number']
+                                                        }}</span>
+                                                    {% endif %}
+                                                    {% if detail['page_range'] %}
+                                                    <span class="badge bg-info">Page: {{ detail['page_range'] }}</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Country</td>
+                                                <td>{{ detail['country'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Language</td>
+                                                <td>{{ detail['language'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Abstract</td>
+                                                <td>{{ detail['abstract'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Keywords</td>
+                                                <td>{{ detail['keywords'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Validation strategy</td>
+                                                <td>{{ detail['validation_strategy'] | default('NA', boolean=True)}}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Funding</td>
+                                                <td>{{ detail['funding_information'] | default('NA', boolean=True)}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+
+        <!-- Model模块 -->
+        <tbody>
+            <tr>
+                <td colspan="2" class="p-0">
+                    <div class="accordion" id="accordionModel">
+                        <div class="accordion-item border-0">
+                            <h2 class="accordion-header" id="headingModel">
+                                <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#model-section" aria-expanded="false" aria-controls="model-section">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <span>Model Information</span>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="model-section" class="accordion-collapse collapse" aria-labelledby="headingModel">
+                                <div class="accordion-body p-0">
+                                    <table class="table table-borderless table-hover table-striped mb-0">
+                                        <tbody>
+                                            <tr height="35">
+                                                <td class="item-name">Model Name</td>
+                                                <td>{{ detail['model_name'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Model Type</td>
+                                                <td>{{ detail['model_type'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Primary Function</td>
+                                                <td>{{ detail['primary_function'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Prediction Task Type</td>
+                                                <td>{{ detail['predication_task_type'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Algorithm</td>
+                                                <td>{{ detail['algorithm'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Variables</td>
+                                                <td>{{ detail['variables'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+
+        <!-- Data模块 -->
+        <tbody>
+            <tr>
+                <td colspan="2" class="p-0">
+                    <div class="accordion" id="accordionData">
+                        <div class="accordion-item border-0">
+                            <h2 class="accordion-header" id="headingData">
+                                <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#data-section" aria-expanded="false" aria-controls="data-section">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <span>Data Information</span>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="data-section" class="accordion-collapse collapse" aria-labelledby="headingData">
+                                <div class="accordion-body p-0">
+                                    <table class="table table-borderless table-hover table-striped mb-0">
+                                        <tbody>
+                                            <tr height="35">
+                                                <td class="item-name">Data Source</td>
+                                                <td>{{ detail.data_source | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Sample Size</td>
+                                                <td>{{ detail['sample_size'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Age</td>
+                                                <td>{{ detail['age'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Race</td>
+                                                <td>{{ detail['race'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Inclusion Criteria</td>
+                                                <td>{{ detail['inclusion_criteria'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Exclusion Criteria</td>
+                                                <td>{{ detail['exclusion_criteria'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Data modality</td>
+                                                <td>{{ detail['data_modality'] | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Data collection period</td>
+                                                <td>{{ detail.collection_period | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Missing data described</td>
+                                                <td>{{ detail.missing_data | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Missingness handling described</td>
+                                                <td>{{ detail.missingness_handling | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Data Normalization</td>
+                                                <td>{{ detail.data_normalization | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+
+        <!-- PPC模块 -->
+        <tbody>
+            <tr>
+                <td colspan="2" class="p-0">
+                    <div class="accordion" id="accordionPPC">
+                        <div class="accordion-item border-0">
+                            <h2 class="accordion-header" id="headingPPC">
+                                <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#ppc-section" aria-expanded="false" aria-controls="ppc-section">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <span>PPC Information</span>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="ppc-section" class="accordion-collapse collapse" aria-labelledby="headingPPC">
+                                <div class="accordion-body p-0">
+                                    <table class="table table-borderless table-hover table-striped mb-0">
+                                        <tbody>
+                                            <tr height="35">
+                                                <td class="item-name">PPC Definition</td>
+                                                <td>{{ detail.ppc_definition | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">PPC type</td>
+                                                <td>{{ detail.ppc_type | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">PPC rate</td>
+                                                <td>{{ detail.ppc_rate | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+
+        <!-- Performance模块 -->
+        <tbody>
+            <tr>
+                <td colspan="2" class="p-0">
+                    <div class="accordion" id="accordionPerformance">
+                        <div class="accordion-item border-0">
+                            <h2 class="accordion-header" id="headingPerformance">
+                                <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#performance-section" aria-expanded="false"
+                                    aria-controls="performance-section">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <span>Model Performance Information</span>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="performance-section" class="accordion-collapse collapse"
+                                aria-labelledby="headingPerformance">
+                                <div class="accordion-body p-0">
+                                    <table class="table table-borderless table-hover table-striped mb-0">
+                                        {% if detail.mae %}
+                                        <tr height="35">
+                                            <td class="item-name">Mean Absolute Error</td>
+                                            <td>{{ detail.mae }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.mse %}
+                                        <tr height="35">
+                                            <td class="item-name">Mean Square Error</td>
+                                            <td>{{ detail.mse }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.rmse %}
+                                        <tr height="35">
+                                            <td class="item-name">Root Mean Square Error</td>
+                                            <td>{{ detail.rmse }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.maxae %}
+                                        <tr height="35">
+                                            <td class="item-name">Maximum Absolute Error</td>
+                                            <td>{{ detail.maxae }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.mape %}
+                                        <tr height="35">
+                                            <td class="item-name">Mean Absolute Percentage Error</td>
+                                            <td>{{ detail.mape }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.rmsle %}
+                                        <tr height="35">
+                                            <td class="item-name">Root Mean Square Logarithmic Error</td>
+                                            <td>{{ detail.rmsle }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.rae %}
+                                        <tr height="35">
+                                            <td class="item-name">Relative Absolute Error</td>
+                                            <td>{{ detail.rae }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.r %}
+                                        <tr height="35">
+                                            <td class="item-name">Correlation Coefficient</td>
+                                            <td>{{ detail.r }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.pcc %}
+                                        <tr height="35">
+                                            <td class="item-name">Pearson Correlation Coefficient</td>
+                                            <td>{{ detail.pcc }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.srcc %}
+                                        <tr height="35">
+                                            <td class="item-name">Spearman's Rank Correlation Coefficient</td>
+                                            <td>{{ detail.srcc }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.r2 %}
+                                        <tr height="35">
+                                            <td class="item-name">Coefficient of Determination</td>
+                                            <td>{{ detail.r2 }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.adjusted_r2 %}
+                                        <tr height="35">
+                                            <td class="item-name">Adjusted R-Square</td>
+                                            <td>{{ detail.adjusted_r2 }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.f %}
+                                        <tr height="35">
+                                            <td class="item-name">F-statistic</td>
+                                            <td>{{ detail.f }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.aic %}
+                                        <tr height="35">
+                                            <td class="item-name">Akaike Information Criterion</td>
+                                            <td>{{ detail.aic }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.bic %}
+                                        <tr height="35">
+                                            <td class="item-name">Bayesian Information Criterion</td>
+                                            <td>{{ detail.bic }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.rpd %}
+                                        <tr height="35">
+                                            <td class="item-name">Ratio of Standard Deviation to Prediction Error
+                                            </td>
+                                            <td>{{ detail.rpd }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.rc %}
+                                        <tr height="35">
+                                            <td class="item-name">Calibration Correlation Coefficient</td>
+                                            <td>{{ detail.rc }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.rp %}
+                                        <tr height="35">
+                                            <td class="item-name">Prediction Correlation Coefficient</td>
+                                            <td>{{ detail.rp }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.rmsec %}
+                                        <tr height="35">
+                                            <td class="item-name">Root Mean Square Error of Calibration</td>
+                                            <td>{{ detail.rmsec }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.rmsecv %}
+                                        <tr height="35">
+                                            <td class="item-name">Root Mean Square Error of Cross Validation</td>
+                                            <td>{{ detail.rmsecv }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.rmsep %}
+                                        <tr height="35">
+                                            <td class="item-name">Root Mean Square Error of Prediction</td>
+                                            <td>{{ detail.rmsep }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.accuracy %}
+                                        <tr height="35">
+                                            <td class="item-name">Accuracy</td>
+                                            <td>{{ detail.accuracy }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.f1 %}
+                                        <tr height="35">
+                                            <td class="item-name">F1-score</td>
+                                            <td>{{ detail.f1 }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.f_beta %}
+                                        <tr height="35">
+                                            <td class="item-name">Fβ-score</td>
+                                            <td>{{ detail.f_beta }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.oe_ratio %}
+                                        <tr height="35">
+                                            <td class="item-name">O/E ratio</td>
+                                            <td>{{ detail.oe_ratio }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.auc %}
+                                        <tr height="35">
+                                            <td class="item-name">Area Under Curve</td>
+                                            <td>{{ detail.auc }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.ap %}
+                                        <tr height="35">
+                                            <td class="item-name">Average Precision</td>
+                                            <td>{{ detail.ap }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.auc_pr %}
+                                        <tr height="35">
+                                            <td class="item-name">AUC-PR</td>
+                                            <td>{{ detail.auc_pr }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.brier_score %}
+                                        <tr height="35">
+                                            <td class="item-name">Brier Score</td>
+                                            <td>{{ detail.brier_score }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.log_loss %}
+                                        <tr height="35">
+                                            <td class="item-name">Logarithmic Loss</td>
+                                            <td>{{ detail.log_loss }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.precision %}
+                                        <tr height="35">
+                                            <td class="item-name">Precision/Positive Predictive Value</td>
+                                            <td>{{ detail.precision }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.recall %}
+                                        <tr height="35">
+                                            <td class="item-name">Recall</td>
+                                            <td>{{ detail.recall }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.sensitivity %}
+                                        <tr height="35">
+                                            <td class="item-name">Sensitivity</td>
+                                            <td>{{ detail.sensitivity }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.specificity %}
+                                        <tr height="35">
+                                            <td class="item-name">Specificity</td>
+                                            <td>{{ detail.specificity }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.youden %}
+                                        <tr height="35">
+                                            <td class="item-name">Youden index</td>
+                                            <td>{{ detail.youden }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.cut_off %}
+                                        <tr height="35">
+                                            <td class="item-name">Cut-Off Value</td>
+                                            <td>{{ detail.cut_off }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.negative_predictive %}
+                                        <tr height="35">
+                                            <td class="item-name">Negative Predictive Value</td>
+                                            <td>{{ detail.negative_predictive }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.lift %}
+                                        <tr height="35">
+                                            <td class="item-name">Lift</td>
+                                            <td>{{ detail.lift }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.g_mean %}
+                                        <tr height="35">
+                                            <td class="item-name">G-Mean</td>
+                                            <td>{{ detail.g_mean }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.mcc %}
+                                        <tr height="35">
+                                            <td class="item-name">Matthews Correlation Coefficient</td>
+                                            <td>{{ detail.mcc }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.kappa %}
+                                        <tr height="35">
+                                            <td class="item-name">Kappa Coefficient</td>
+                                            <td>{{ detail.kappa }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.calibration_slope %}
+                                        <tr height="35">
+                                            <td class="item-name">Calibration slope</td>
+                                            <td>{{ detail.calibration_slope }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.hosmer_lemeshow %}
+                                        <tr height="35">
+                                            <td class="item-name">Hosmer-Lemeshow p value</td>
+                                            <td>{{ detail.hosmer_lemeshow }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.aic1 %}
+                                        <tr height="35">
+                                            <td class="item-name">Akaike Information Criterion</td>
+                                            <td>{{ detail.aic1 }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if detail.bic1 %}
+                                        <tr height="35">
+                                            <td class="item-name">Bayesian Information Criterion</td>
+                                            <td>{{ detail.bic1 }}</td>
+                                        </tr>
+                                        {% endif %}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+
+        <!-- Outcome模块 -->
+        <tbody>
+            <tr>
+                <td colspan="2" class="p-0">
+                    <div class="accordion" id="accordionOutcome">
+                        <div class="accordion-item border-0">
+                            <h2 class="accordion-header" id="headingOutcome">
+                                <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#outcome-section" aria-expanded="false"
+                                    aria-controls="outcome-section">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <span>Outcome and Analysis Information</span>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="outcome-section" class="accordion-collapse collapse"
+                                aria-labelledby="headingOutcome">
+                                <div class="accordion-body p-0">
+                                    <table class="table table-borderless table-hover table-striped mb-0">
+                                        <tbody>
+                                            <tr height="35">
+                                                <td class="item-name">Heterogeneity Analysis</td>
+                                                <td>{{ detail.heterogeneity | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Limitations</td>
+                                                <td>{{ detail.limitations | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Clinical Implementation and Evaluation</td>
+                                                <td>{{ detail.clinical_implementation | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Model Enhancement Suggestions</td>
+                                                <td>{{ detail.model_enhancement | default('NA', boolean=True) }}</td>
+                                            </tr>
+                                            <tr height="35">
+                                                <td class="item-name">Conclusion</td>
+                                                <td>{{ detail.conclusion | default('NA', boolean=True) }}</td>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+</div>

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}
+{% endblock title %}
+
+{% block include %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.24.1/bootstrap-table.min.css">
+<!-- 引入 noUiSlider -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.css" />
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/browse.css') }}">
+{% endblock include %}
+
+{% block content %}
+<div class="container">
+
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mt-2 mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('index.index') }}">Home</a></li>
+            <li class="breadcrumb-item">Search</li>
+            <li class="breadcrumb-item">{{ search_type | safe }}</li>
+            <li class="breadcrumb-item active" aria-current="page">Search Results</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        {% include 'browse/partials/table_list.html' %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.24.1/bootstrap-table.min.js"></script>
+<script src="{{ url_for('static', filename='Scripts/browse.js') }}"></script>
+<script src="{{ url_for('static', filename='Scripts/validation.js') }}"></script>
+{% endblock script %}

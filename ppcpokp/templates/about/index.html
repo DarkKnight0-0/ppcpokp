@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mt-2 mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('index.index') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">About Us</li>
+        </ol>
+    </nav>
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <!-- Institutes for Systems Genetics -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light blue-header">
+                    <h5 class="mb-0"><i class="bi bi-building me-2"></i>Institutes for Systems Genetics</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">With the further development of precision medical science, molecular genetics mechanism and evolution will become the key to realize the revelation of genetics mechanism and the innovation of technology. In February 2018, supported by West China Hospital, Institutes for Systems Genetics was officially established, aiming at integrating the existed biobank, supporting platforms of genomics, proteomics and metabonomics as well as the biomedical big data center in West China Hospital. By cooperating with experts in clinical medicine and basic medicine, our institute has been exploring the occurrence and development of human rare diseases’ genetic problem, promoting the cutting-edge research in medicine.</p>
+                </div>
+            </div>
+
+            <!-- Anesthesia & Operation Center -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light blue-header">
+                    <h5 class="mb-0"><i class="bi bi-hospital me-2"></i>Anesthesia & Operation Center</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">The Department of Anesthesiology of West China Hospital, Sichuan University, was officially founded as an independent Department in 1978. It is the birthplace of the contemporary standardized residency training system in China. The medical level of the department is world-leading, and the accidental death rate from anesthesia is less than 1/300,000. It leads the development of visual anesthesia in China and innovates many visual anesthesia techniques worldwide. In terms of scientific research, the "Research on Inhalation Anesthesia" led by the department won the second prize in the National Science and Technology Progress Award in 2004; the patents for new anesthesia drugs account for about 1/5 of the patents in China. In 2018, the "Research on perioperative risk classification and differentiated management techniques for the Elderly" was funded by the National Key R&D Program of the Ministry of Science and Technology. The department's reputation and comprehensive strength have been ranked first in China for nine consecutive years in the list of best specialties in Chinese hospitals.</p>
+                </div>
+            </div>
+
+            <!-- Contact Us -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light blue-header">
+                    <h5 class="mb-0"><i class="bi bi-envelope me-2"></i>Contact Us</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><i class="bi bi-geo-alt-fill me-2 text-secondary"></i><strong>Address:</strong> 9F & 10F, Building D5-A, Frontiers Science Center for Disease-related Molecular Network, No.2222, Xinchuan Road, Gaoxin District, Chengdu</li>
+                        <li class="mb-2"><i class="bi bi-mailbox2 me-2 text-secondary"></i><strong>Postal code:</strong> 610212</li>
+                        <li class="mb-2"><i class="bi bi-telephone-fill me-2 text-secondary"></i><strong>Tel:</strong> 9F: 028-61528679 / 028-61528680; 10F: 028-61528681 / 028-61528682</li>
+                        <li class="mb-2"><i class="bi bi-envelope-fill me-2 text-secondary"></i><strong>E-mail:</strong> duanjc68@163.com</li>
+                        <li class="mb-0"><i class="bi bi-globe me-2 text-secondary"></i><strong>Web:</strong> <a href="http://www.sysbio.org.cn/" target="_blank" rel="noopener">http://www.sysbio.org.cn/</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Please Site (Selected Publications) -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light blue-header">
+                    <h5 class="mb-0"><i class="bi bi-journal-bookmark-fill me-2"></i>Please Site</h5>
+                </div>
+                <div class="card-body">
+                    <style>
+                        /* 自定义期刊封面占位样式 — 模拟期刊封面图片 */
+                        .journal-cover {
+                            width: 100px;
+                            height: 130px;
+                            background: linear-gradient(145deg, #f8f9fc 0%, #e9ecef 100%);
+                            border-radius: 8px;
+                            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            text-align: center;
+                            font-weight: 600;
+                            transition: transform 0.2s, box-shadow 0.2s;
+                            border: 1px solid rgba(0,0,0,0.05);
+                        }
+                        .journal-cover:hover {
+                            transform: translateY(-3px);
+                            box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+                        }
+                        .journal-cover .journal-abbr {
+                            font-size: 1rem;
+                            color: #1e466e;
+                            margin-bottom: 4px;
+                            letter-spacing: 0.5px;
+                        }
+                        .journal-cover .journal-year {
+                            font-size: 0.75rem;
+                            color: #5f6c80;
+                            background: rgba(255,255,240,0.6);
+                            padding: 2px 6px;
+                            border-radius: 20px;
+                            display: inline-block;
+                        }
+                        .journal-cover .cover-icon {
+                            font-size: 2.2rem;
+                            color: #3b7cbf;
+                            margin-bottom: 8px;
+                        }
+                        .pub-title {
+                            font-size: 1.05rem;
+                            font-weight: 600;
+                            color: #1e466e;
+                            line-height: 1.3;
+                        }
+                        .pub-authors {
+                            font-size: 0.85rem;
+                            color: #4a5b6e;
+                            margin-bottom: 6px;
+                        }
+                        .pub-journal {
+                            font-size: 0.85rem;
+                            font-weight: 500;
+                            color: #2c3e50;
+                            font-style: italic;
+                        }
+                        .pub-links a {
+                            text-decoration: none;
+                            font-size: 0.8rem;
+                            margin-right: 12px;
+                            transition: opacity 0.1s;
+                        }
+                        .pub-links a:hover {
+                            text-decoration: underline;
+                            opacity: 0.8;
+                        }
+                        @media (max-width: 576px) {
+                            .journal-cover {
+                                width: 80px;
+                                height: 105px;
+                                margin-bottom: 8px;
+                            }
+                            .journal-cover .cover-icon {
+                                font-size: 1.6rem;
+                            }
+                            .pub-title {
+                                font-size: 0.95rem;
+                            }
+                        }
+                    </style>
+
+                    <!-- 第一篇论文: PPCRKB -->
+                    <div class="row align-items-start mb-5 pb-3 border-bottom">
+                        <div class="col-auto">
+                            <div class="journal-cover">
+                                <img src="{{ url_for('static', filename='images/database_cover.jpg') }}" alt="Database Cover" class="img-fluid mb-2">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="pub-title">PPCRKB: a risk factor knowledge base of postoperative pulmonary complications</div>
+                            <div class="pub-authors">Duan J, Li P, Shao A, Hao X, Zhou R, Bi C, Liu X, Li W, Zhu H, Chen G, Shen B*, Zhu T*.</div>
+                            <div class="pub-journal mb-2">Database (Oxford). 2024 Jul 19;2024:baae054.</div>
+                            <div class="pub-links">
+                                <a href="https://doi.org/10.1093/database/baae054" target="_blank" rel="noopener noreferrer"><i class="bi bi-link-45deg"></i> DOI: 10.1093/database/baae054</a>
+                                <a href="https://pubmed.ncbi.nlm.nih.gov/39028753/" target="_blank" rel="noopener noreferrer"><i class="bi bi-file-medical"></i> PMID: 39028753</a>
+                                <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11259045/" target="_blank" rel="noopener noreferrer"><i class="bi bi-file-earmark-post"></i> PMC (Open Access)</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 第二篇论文: 术中呼吸动态特征模型 -->
+                    <div class="row align-items-start">
+                        <div class="col-auto">
+                            <div class="journal-cover">
+                                <img src="{{ url_for('static', filename='images/bja_cover.jpg') }}" alt="Anaesthesia Cover" class="img-fluid mb-2">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="pub-title">Utilising intraoperative respiratory dynamic features for developing and validating an explainable machine learning model for postoperative pulmonary complications</div>
+                            <div class="pub-authors">Li P, Gao S, Wang Y, Zhou R, Chen G, Li W, Hao X, Zhu T.</div>
+                            <div class="pub-journal mb-2">Br J Anaesth. 2024 Jun;132(6):1315-1326.</div>
+                            <div class="pub-links">
+                                <a href="https://doi.org/10.1016/j.bja.2024.02.025" target="_blank" rel="noopener noreferrer"><i class="bi bi-link-45deg"></i> DOI: 10.1016/j.bja.2024.02.025</a>
+                                <a href="https://pubmed.ncbi.nlm.nih.gov/38637267/" target="_blank" rel="noopener noreferrer"><i class="bi bi-file-medical"></i> PMID: 38637267</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

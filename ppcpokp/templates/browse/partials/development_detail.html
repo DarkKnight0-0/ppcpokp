@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Detail - {{ detail.model_id }}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- ECharts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/6.0.0/echarts.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: white;
+            padding: 15px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 10px 10px 0 0 !important;
+        }
+
+        .card-title-mini {
+            color: white;
+            background-color: rgb(52, 152, 219);
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 340px;
+        }
+
+        .accordion-button {
+            background-color: #f8f9fa;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: #e7f1ff;
+            color: #0c63e4;
+        }
+
+        .item-name {
+            width: 200px;
+            font-weight: 600;
+            background-color: #f8f9fa;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* 将条纹行的背景色改为浅蓝色 */
+        .table-striped>tbody>tr:nth-of-type(odd) {
+            background-color: #e6f2ff !important;
+            /* 浅蓝色 */
+        }
+
+        /* 如果要同时支持thead的固定背景色 */
+        .table-striped>tbody>tr:nth-of-type(odd)>* {
+            background-color: #e6f2ff !important;
+        }
+
+        /* 表头样式：深蓝背景、白色文字、文字居中 */
+        .table thead {
+            background-color: rgb(52, 152, 219);
+            /* 稍深一点的蓝色 */
+        }
+
+        .table thead th {
+            color: white;
+            text-align: center;
+            vertical-align: middle;
+            /* 垂直居中 */
+            border-color: #1a68d1;
+            /* 边框颜色稍深 */
+            font-weight: 600;
+            /* 加粗字体 */
+            padding: 12px 8px;
+            /* 调整内边距 */
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .btn-custom {
+            width: 280px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .item-name {
+                width: 150px;
+            }
+        }
+
+        .gradient-text {
+            background: linear-gradient(to bottom, #0f2b5e, #4a90e2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 0 20px rgba(74, 144, 226, 0.3);
+        }
+
+        .model-id {
+            background-color: #3498db;
+            color: white;
+            border-radius: 20px;
+            padding: 3px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="detail">
+        <div class="card h-100">
+            <div class="card-header">
+                <div class="row">
+
+                    <div class="col-11">
+                        <h4 class="card-title mt-2 text-black">{{ detail.model_name | trim | capitalize_first }}</h4>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h6 class="card-title mt-2 mb-0">Derived from the study published by
+                                {{ detail.authors.split(',')[0] }} et al., {{ detail.publication_year }};
+                                {{ detail.journal_name }}</h6>
+                        </div>
+                    </div>
+
+                    <div class="col-1 text-end align-items-center">
+                        <span class="icon icon-{{ 
+        '2' if detail.model_type == 'Traditional Statistical Model' 
+        else '3' if detail.model_type == 'Multi-Model / Hybrid Learning Strategy' 
+        else '4' if detail.model_type == 'Unclassified Method' 
+        else '1' 
+    }} icon--48 text-nowrap" style="margin-top: 12px"></span>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th colspan="12">Utility of prediction model score system</th>
+                                </tr>
+                            </thead>
+                        </table>
+
+                        <div class="chart-container" id="chart-detail-{{ detail.model_id }}"></div>
+
+                        
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th colspan="12">Model Basic Information</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="item-name" colspan="6"><b>Model Type</b></td>
+                                    <td class="item-name" colspan="6"><b>Variable Number</b></td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="6">{{ detail.model_type }}</td>
+                                    <td class="item-name" colspan="6">{{ detail.variable_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="6"><b>Target Outcome</b></td>
+                                    <td class="item-name" colspan="6"><b>Patient Population</b></td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="6">{{ detail.ppc_type }}</td>
+                                    <td class="item-name" colspan="6">{{ detail.population_category }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="6"><b>Sample Size</b></td>
+                                    <td class="item-name" colspan="6"><b>Surgical Specialty</b></td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="6">{{ detail.sample_size }}</td>
+                                    <td class="item-name" colspan="6">{{ detail.surgery_discipline }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="12"><b>Clinical Application Modality</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="12">{{
+                                        detail.clinical_application_modality }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-md-12">
+                    <p><b>Total Score: {{ detail.score }}/13</b> | Study Setting:
+                            {{ detail.study_setting }} | Sample Size: {{ detail.sample_size_score }} |
+                            Discrimination
+                            (AUC): {{ detail.discrimination }} | Calibration: {{ detail.calibration }} |
+                            Validation:
+                            {{ detail.validation }} | Clinical Usability: {{ detail.clinical_usability }}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th colspan="12">Model Performance Profile</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="item-name" colspan="3"><b>AUC</b></td>
+                                    <td class="item-name" colspan="9">{{ detail.auc }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="3"><b>Sensitivity</b></td>
+                                    <td class="item-name" colspan="9">{{ detail.sensitivity }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="3"><b>Specificity</b></td>
+                                    <td class="item-name" colspan="9">{{ detail.specificity }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="3"><b>Calibration</b></td>
+                                    <td class="item-name" colspan="9">{{ detail.calibration0 }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="button-container">
+                            <a href="validation?model_name={{ detail.model_name|remove_all_brackets }}" target="_blank"
+                                class="btn btn-primary px-4 py-2 fw-medium btn-custom">Model
+                                External Validation</a>
+                            <a href="comparison?model_name={{ detail.model_name|remove_all_brackets }}" target="_blank"
+                                class="btn btn-outline-primary px-4 py-2 fw-medium btn-custom">Model
+                                External Comparison</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th colspan="12">Clinical Appraisal (PROBAST + AI tool)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="item-name" colspan="4"><b>Domain</b></td>
+                                    <td class="item-name" colspan="4"><b>Quality</b></td>
+                                    <td class="item-name" colspan="4"><b>Applicability</b></td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="4">Participants and data sources</td>
+                                    <td class="item-name" colspan="4"><span
+                                            class="logo-{{ detail.q_sources|lower }}"></span></td>
+                                    <td class="item-name" colspan="4"><span
+                                            class="logo-{{ detail.a_sources|lower }}"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="4">Predictors</td>
+                                    <td class="item-name" colspan="4"><span
+                                            class="logo-{{ detail.q_predictors|lower }}"></span></td>
+                                    <td class="item-name" colspan="4"><span
+                                            class="logo-{{ detail.a_predictors|lower }}"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="4">Outcome</td>
+                                    <td class="item-name" colspan="4"><span
+                                            class="logo-{{ detail.q_outcome|lower }}"></span></td>
+                                    <td class="item-name" colspan="4"><span
+                                            class="logo-{{ detail.a_outcome|lower }}"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="4">Analysis</td>
+                                    <td class="item-name" colspan="4"><span
+                                            class="logo-{{ detail.q_analysis|lower }}"></span></td>
+                                    <td class="item-name" colspan="4"></td>
+                                </tr>
+                                <tr>
+                                    <td class="item-name" colspan="4">Overall</td>
+                                    <td class="item-name" colspan="4">{{ detail.quality }}</td>
+                                    <td class="item-name" colspan="4">{{ detail.applicability }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped mb-4" data-modal-title="ID: {{ detail.model_id }} - Detail">
+            <!-- Study模块 -->
+            <tbody>
+                <tr>
+                    <td colspan="2" class="p-0">
+                        <div class="accordion" id="accordionStudy">
+                            <div class="accordion-item border-0">
+                                <h2 class="accordion-header" id="headingStudy">
+                                    <button class="accordion-button collapsed py-2" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#study-section" aria-expanded="false"
+                                        aria-controls="study-section">
+                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                            <span>Study Information</span>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="study-section" class="accordion-collapse collapse"
+                                    aria-labelledby="headingStudy">
+                                    <div class="accordion-body p-0">
+                                        <table class="table table-borderless table-hover table-striped mb-0">
+                                            <tbody>
+                                                <tr height="35">
+                                                    <td class="item-name">Title</td>
+                                                    <td>{{ detail['title'] | default('NA', boolean=True) | trim | capitalize_first }}
+                                                        <br>
+                                                        {% if detail['pmid'] %}
+                                                        <span class="badge bg-primary">
+                                                            <a href="https://pubmed.ncbi.nlm.nih.gov/{{ detail['pmid'] }}"
+                                                                target="_blank" class="text-white text-decoration-none">
+                                                                PMID: {{ detail['pmid'] }}
+                                                                <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                                            </a>
+                                                        </span>
+                                                        {% endif %}
+                                                        {% if detail['doi'] %}
+                                                        <span class="badge bg-primary">
+                                                            <a href="https://doi.org/{{ detail['doi'] }}"
+                                                                target="_blank" class="text-white text-decoration-none">
+                                                                DOI: {{ detail['doi'] }}
+                                                                <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                                            </a>
+                                                        </span>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Authors</td>
+                                                    <td>{{ detail['authors'] }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Corresponding Author</td>
+                                                    <td>{{ detail['corresponding_author'] }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Journal</td>
+                                                    <td>{{ detail['journal_name'] | trim | capitalize_first}}
+                                                        <br>
+                                                        {% if detail['journal_issn'] %}
+                                                        <span class="badge bg-info">ISSN: {{ detail['journal_issn']
+                                                            }}</span>
+                                                        {% endif %}
+                                                        {% if detail['impact_factor'] %}
+                                                        <span class="badge bg-info">IF: {{ detail['impact_factor']
+                                                            }}</span>
+                                                        {% endif %}
+                                                        {% if detail['jcr'] %}
+                                                        <span class="badge bg-info">JCR: {{ detail['jcr'] }}</span>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Publication</td>
+                                                    <td>
+                                                        {% if detail['publication_year'] %}
+                                                        <span class="badge bg-info">Year: {{ detail['publication_year']
+                                                            }}</span>
+                                                        {% endif %}
+                                                        {% if detail['volunme_number'] %}
+                                                        <span class="badge bg-info">Volume: {{ detail['volunme_number']
+                                                            }}</span>
+                                                        {% endif %}
+                                                        {% if detail['issue_number'] %}
+                                                        <span class="badge bg-info">Issue: {{ detail['issue_number']
+                                                            }}</span>
+                                                        {% endif %}
+                                                        {% if detail['page_range'] %}
+                                                        <span class="badge bg-info">Page: {{ detail['page_range']
+                                                            }}</span>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Country</td>
+                                                    <td>{{ detail['country'] | default('NA', boolean=True) | trim | capitalize_first
+                                                        }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Language</td>
+                                                    <td>{{ detail['language'] | default('NA', boolean=True) | trim | capitalize_first
+                                                        }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Abstract</td>
+                                                    <td>{{ detail['abstract'] | default('NA', boolean=True) | trim | capitalize_first
+                                                        }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Keywords</td>
+                                                    <td>{{ detail['keywords'] | default('NA', boolean=True) | trim | capitalize_first
+                                                        }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Validation strategy</td>
+                                                    <td>{{ detail['validation_strategy'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Funding</td>
+                                                    <td>{{ detail['funding_information'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+
+            <!-- Model模块 -->
+            <tbody>
+                <tr>
+                    <td colspan="2" class="p-0">
+                        <div class="accordion" id="accordionModel">
+                            <div class="accordion-item border-0">
+                                <h2 class="accordion-header" id="headingModel">
+                                    <button class="accordion-button collapsed py-2" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#model-section" aria-expanded="false"
+                                        aria-controls="model-section">
+                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                            <span>Model Information</span>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="model-section" class="accordion-collapse collapse"
+                                    aria-labelledby="headingModel">
+                                    <div class="accordion-body p-0">
+                                        <table class="table table-borderless table-hover table-striped mb-0">
+                                            <tbody>
+                                                <tr height="35">
+                                                    <td class="item-name">Model Name</td>
+                                                    <td>{{ detail['model_name'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Model Type</td>
+                                                    <td>{{ detail['model_type'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Model Type Subgroup</td>
+                                                    <td>{{ detail['model_type_subgroup'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Primary Function</td>
+                                                    <td>{{ detail['primary_function'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Model Principle</td>
+                                                    <td>{{ detail['model_principle'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Prediction Task Type</td>
+                                                    <td>{{ detail['prediction_task_type'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Algorithm</td>
+                                                    <td>{{ detail['algorithm'] | default('NA', boolean=True) | trim | capitalize_first
+                                                        }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Training Protocol</td>
+                                                    <td>{{ detail['training_protocol'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Link</td>
+                                                    <td>{{ detail['link'] | default('NA', boolean=True) | trim | capitalize_first }}
+                                                    </td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Feature Selection</td>
+                                                    <td>{{ detail['feature_selection'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Variables</td>
+                                                    <td>{{ detail['variables'] | default('NA', boolean=True) | trim | capitalize_first
+                                                        }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+
+            <!-- Data模块 -->
+            <tbody>
+                <tr>
+                    <td colspan="2" class="p-0">
+                        <div class="accordion" id="accordionData">
+                            <div class="accordion-item border-0">
+                                <h2 class="accordion-header" id="headingData">
+                                    <button class="accordion-button collapsed py-2" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#data-section" aria-expanded="false"
+                                        aria-controls="data-section">
+                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                            <span>Data Information</span>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="data-section" class="accordion-collapse collapse"
+                                    aria-labelledby="headingData">
+                                    <div class="accordion-body p-0">
+                                        <table class="table table-borderless table-hover table-striped mb-0">
+                                            <tbody>
+                                                <tr height="35">
+                                                    <td class="item-name">Data Source</td>
+                                                    <td>{{ detail.data_source | default('NA', boolean=True) | trim | capitalize_first
+                                                        }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Sample Size</td>
+                                                    <td>{{ detail['sample_size'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Age</td>
+                                                    <td>{{ detail['age'] | default('NA', boolean=True) | trim | capitalize_first }}
+                                                    </td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Race</td>
+                                                    <td>{{ detail['race'] | default('NA', boolean=True) | trim | capitalize_first }}
+                                                    </td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Inclusion Criteria</td>
+                                                    <td>{{ detail['inclusion_criteria'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Exclusion Criteria</td>
+                                                    <td>{{ detail['exclusion_criteria'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Data modality</td>
+                                                    <td>{{ detail['data_modality'] | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Data collection period</td>
+                                                    <td>{{ detail.collection_period | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Missing data described</td>
+                                                    <td>{{ detail.missing_data | default('NA', boolean=True) | trim | capitalize_first
+                                                        }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Missingness handling described</td>
+                                                    <td>{{ detail.missingness_handling | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Data Normalization</td>
+                                                    <td>{{ detail.data_normalization | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+
+            <!-- PPC模块 -->
+            <tbody>
+                <tr>
+                    <td colspan="2" class="p-0">
+                        <div class="accordion" id="accordionPPC">
+                            <div class="accordion-item border-0">
+                                <h2 class="accordion-header" id="headingPPC">
+                                    <button class="accordion-button collapsed py-2" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#ppc-section" aria-expanded="false"
+                                        aria-controls="ppc-section">
+                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                            <span>PPC Information</span>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="ppc-section" class="accordion-collapse collapse" aria-labelledby="headingPPC">
+                                    <div class="accordion-body p-0">
+                                        <table class="table table-borderless table-hover table-striped mb-0">
+                                            <tbody>
+                                                <tr height="35">
+                                                    <td class="item-name">PPC Definition</td>
+                                                    <td>{{ detail.ppc_definition | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">PPC type</td>
+                                                    <td>{{ detail.ppc_type | default('NA', boolean=True) | trim | capitalize_first }}
+                                                    </td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">PPC rate</td>
+                                                    <td>{{ detail.ppc_rate | default('NA', boolean=True) | trim | capitalize_first }}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+
+            <!-- Performance模块 -->
+            <tbody>
+                <tr>
+                    <td colspan="2" class="p-0">
+                        <div class="accordion" id="accordionPerformance">
+                            <div class="accordion-item border-0">
+                                <h2 class="accordion-header" id="headingPerformance">
+                                    <button class="accordion-button collapsed py-2" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#performance-section"
+                                        aria-expanded="false" aria-controls="performance-section">
+                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                            <span>Model Performance Information</span>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="performance-section" class="accordion-collapse collapse"
+                                    aria-labelledby="headingPerformance">
+                                    <div class="accordion-body p-0">
+                                        <table class="table table-borderless table-hover table-striped mb-0">
+                                            {% if detail.mae %}
+                                            <tr height="35">
+                                                <td class="item-name">Mean Absolute Error</td>
+                                                <td>{{ detail.mae | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.mse %}
+                                            <tr height="35">
+                                                <td class="item-name">Mean Square Error</td>
+                                                <td>{{ detail.mse | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.rmse %}
+                                            <tr height="35">
+                                                <td class="item-name">Root Mean Square Error</td>
+                                                <td>{{ detail.rmse | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.maxae %}
+                                            <tr height="35">
+                                                <td class="item-name">Maximum Absolute Error</td>
+                                                <td>{{ detail.maxae | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.mape %}
+                                            <tr height="35">
+                                                <td class="item-name">Mean Absolute Percentage Error</td>
+                                                <td>{{ detail.mape | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.rmsle %}
+                                            <tr height="35">
+                                                <td class="item-name">Root Mean Square Logarithmic Error</td>
+                                                <td>{{ detail.rmsle | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.rae %}
+                                            <tr height="35">
+                                                <td class="item-name">Relative Absolute Error</td>
+                                                <td>{{ detail.rae | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.r %}
+                                            <tr height="35">
+                                                <td class="item-name">Correlation Coefficient</td>
+                                                <td>{{ detail.r | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.pcc %}
+                                            <tr height="35">
+                                                <td class="item-name">Pearson Correlation Coefficient</td>
+                                                <td>{{ detail.pcc | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.srcc %}
+                                            <tr height="35">
+                                                <td class="item-name">Spearman's Rank Correlation Coefficient</td>
+                                                <td>{{ detail.srcc | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.r2 %}
+                                            <tr height="35">
+                                                <td class="item-name">Coefficient of Determination</td>
+                                                <td>{{ detail.r2 | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.adjusted_r2 %}
+                                            <tr height="35">
+                                                <td class="item-name">Adjusted R-Square</td>
+                                                <td>{{ detail.adjusted_r2 | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.f %}
+                                            <tr height="35">
+                                                <td class="item-name">F-statistic</td>
+                                                <td>{{ detail.f | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.aic %}
+                                            <tr height="35">
+                                                <td class="item-name">Akaike Information Criterion</td>
+                                                <td>{{ detail.aic | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.bic %}
+                                            <tr height="35">
+                                                <td class="item-name">Bayesian Information Criterion</td>
+                                                <td>{{ detail.bic | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.rpd %}
+                                            <tr height="35">
+                                                <td class="item-name">Ratio of Standard Deviation to Prediction Error
+                                                </td>
+                                                <td>{{ detail.rpd | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.rc %}
+                                            <tr height="35">
+                                                <td class="item-name">Calibration Correlation Coefficient</td>
+                                                <td>{{ detail.rc | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.rp %}
+                                            <tr height="35">
+                                                <td class="item-name">Prediction Correlation Coefficient</td>
+                                                <td>{{ detail.rp | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.rmsec %}
+                                            <tr height="35">
+                                                <td class="item-name">Root Mean Square Error of Calibration</td>
+                                                <td>{{ detail.rmsec | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.rmsecv %}
+                                            <tr height="35">
+                                                <td class="item-name">Root Mean Square Error of Cross Validation</td>
+                                                <td>{{ detail.rmsecv | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.rmsep %}
+                                            <tr height="35">
+                                                <td class="item-name">Root Mean Square Error of Prediction</td>
+                                                <td>{{ detail.rmsep | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.accuracy %}
+                                            <tr height="35">
+                                                <td class="item-name">Accuracy</td>
+                                                <td>{{ detail.accuracy | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.f1 %}
+                                            <tr height="35">
+                                                <td class="item-name">F1-score</td>
+                                                <td>{{ detail.f1 | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.f_beta %}
+                                            <tr height="35">
+                                                <td class="item-name">Fβ-score</td>
+                                                <td>{{ detail.f_beta | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.oe_ratio %}
+                                            <tr height="35">
+                                                <td class="item-name">O/E ratio</td>
+                                                <td>{{ detail.oe_ratio | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.auc %}
+                                            <tr height="35">
+                                                <td class="item-name">Area Under Curve</td>
+                                                <td>{{ detail.auc | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.ap %}
+                                            <tr height="35">
+                                                <td class="item-name">Average Precision</td>
+                                                <td>{{ detail.ap | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.auc_pr %}
+                                            <tr height="35">
+                                                <td class="item-name">AUC-PR</td>
+                                                <td>{{ detail.auc_pr | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.brier_score %}
+                                            <tr height="35">
+                                                <td class="item-name">Brier Score</td>
+                                                <td>{{ detail.brier_score | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.log_loss %}
+                                            <tr height="35">
+                                                <td class="item-name">Logarithmic Loss</td>
+                                                <td>{{ detail.log_loss | trim | capitalize_first}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.precision %}
+                                            <tr height="35">
+                                                <td class="item-name">Precision/Positive Predictive Value</td>
+                                                <td>{{ detail.precision | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.recall %}
+                                            <tr height="35">
+                                                <td class="item-name">Recall</td>
+                                                <td>{{ detail.recall | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.sensitivity %}
+                                            <tr height="35">
+                                                <td class="item-name">Sensitivity</td>
+                                                <td>{{ detail.sensitivity | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.specificity %}
+                                            <tr height="35">
+                                                <td class="item-name">Specificity</td>
+                                                <td>{{ detail.specificity | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.youden %}
+                                            <tr height="35">
+                                                <td class="item-name">Youden index</td>
+                                                <td>{{ detail.youden | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.cut_off %}
+                                            <tr height="35">
+                                                <td class="item-name">Cut-Off Value</td>
+                                                <td>{{ detail.cut_off | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.negative_predictive %}
+                                            <tr height="35">
+                                                <td class="item-name">Negative Predictive Value</td>
+                                                <td>{{ detail.negative_predictive | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.lift %}
+                                            <tr height="35">
+                                                <td class="item-name">Lift</td>
+                                                <td>{{ detail.lift | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.g_mean %}
+                                            <tr height="35">
+                                                <td class="item-name">G-Mean</td>
+                                                <td>{{ detail.g_mean | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.mcc %}
+                                            <tr height="35">
+                                                <td class="item-name">Matthews Correlation Coefficient</td>
+                                                <td>{{ detail.mcc | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.kappa %}
+                                            <tr height="35">
+                                                <td class="item-name">Kappa Coefficient</td>
+                                                <td>{{ detail.kappa | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.calibration_slope %}
+                                            <tr height="35">
+                                                <td class="item-name">Calibration slope</td>
+                                                <td>{{ detail.calibration_slope | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.hosmer_lemeshow %}
+                                            <tr height="35">
+                                                <td class="item-name">Hosmer-Lemeshow p value</td>
+                                                <td>{{ detail.hosmer_lemeshow | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.aic1 %}
+                                            <tr height="35">
+                                                <td class="item-name">Akaike Information Criterion</td>
+                                                <td>{{ detail.aic1 | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if detail.bic1 %}
+                                            <tr height="35">
+                                                <td class="item-name">Bayesian Information Criterion</td>
+                                                <td>{{ detail.bic1 | trim | capitalize_first }}</td>
+                                            </tr>
+                                            {% endif %}
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+
+            <!-- Outcome模块 -->
+            <tbody>
+                <tr>
+                    <td colspan="2" class="p-0">
+                        <div class="accordion" id="accordionOutcome">
+                            <div class="accordion-item border-0">
+                                <h2 class="accordion-header" id="headingOutcome">
+                                    <button class="accordion-button collapsed py-2" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#outcome-section"
+                                        aria-expanded="false" aria-controls="outcome-section">
+                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                            <span>Outcome and Analysis Information</span>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="outcome-section" class="accordion-collapse collapse"
+                                    aria-labelledby="headingOutcome">
+                                    <div class="accordion-body p-0">
+                                        <table class="table table-borderless table-hover table-striped mb-0">
+                                            <tbody>
+                                                <tr height="35">
+                                                    <td class="item-name">Advantages</td>
+                                                    <td>{{ detail.advantages | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Limitations</td>
+                                                    <td>{{ detail.limitations | default('NA', boolean=True) | trim | capitalize_first
+                                                        }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Clinical Implementation and Evaluation</td>
+                                                    <td>{{ detail.clinical_implementation | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Model Maintenance</td>
+                                                    <td>{{ detail.model_maintenance | default('NA', boolean=True) | trim |
+                                                        capitalize_first }}</td>
+                                                </tr>
+                                                <tr height="35">
+                                                    <td class="item-name">Conclusion</td>
+                                                    <td>{{ detail.conclusion | default('NA', boolean=True) | trim | capitalize_first
+                                                        }}</td>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // 图表初始化函数
+        function initDetailChart() {
+            const containerId = 'chart-detail-{{ detail.model_id }}';
+            const container = document.getElementById(containerId);
+
+            if (!container) {
+                console.error('图表容器未找到:', containerId);
+                return;
+            }
+
+            // 如果已有图表实例，先销毁
+            const existingChart = echarts.getInstanceByDom(container);
+            if (existingChart) {
+                existingChart.dispose();
+            }
+
+            const myChart = echarts.init(container);
+
+            // 图表配置
+            const indicators = [
+                { name: 'Study design', max: 1 },
+                { name: 'Study setting', max: 2 },
+                { name: 'Sample size', max: 2 },
+                { name: 'Discrimination (AUC)', max: 2 },
+                { name: 'Calibration', max: 2 },
+                { name: 'Validation', max: 2 },
+                { name: 'Clinical usability', max: 2 }
+            ];
+
+            const dataValues = [
+                {{ detail.study_design }},
+        {{ detail.study_setting }}, 
+        {{ detail.sample_size_score }},
+        {{ detail.discrimination }},
+        {{ detail.calibration }},
+        {{ detail.validation }},
+        {{ detail.clinical_usability }}
+            ];
+
+        const score = {{ detail.score }};
+
+        let lineColor = 'rgba(52, 152, 219, 0.8)';
+        let areaColor = 'rgba(52, 152, 219, 0.4)';
+
+        const option = {
+            tooltip: {
+                trigger: 'item'
+            },
+            radar: {
+                indicator: indicators,
+                shape: 'circle',
+                radius: '65%',
+                center: ['50%', '45%'],
+                splitNumber: 3,
+                axisName: {
+                    color: '#666',
+                    fontSize: 12,
+                    fontWeight: 'bold'
+                },
+                splitArea: {
+                    areaStyle: {
+                        color: ['rgba(52, 152, 219, 0.1)', 'rgba(52, 152, 219, 0.05)', 'rgba(52, 152, 219, 0.02)']
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: 'rgba(52, 152, 219, 0.3)'
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: 'rgba(52, 152, 219, 0.3)'
+                    }
+                }
+            },
+            series: [{
+                type: 'radar',
+                data: [{
+                    value: dataValues,
+                    name: 'Score',
+                    symbol: 'circle',
+                    symbolSize: 8,
+                    lineStyle: {
+                        width: 3,
+                        color: lineColor
+                    },
+                    areaStyle: {
+                        color: areaColor
+                    },
+                    itemStyle: {
+                        color: lineColor
+                    }
+                }]
+            }],
+            grid: {
+                top: 10,
+                bottom: 10,
+                left: 10,
+                right: 10
+            }
+        };
+
+        myChart.setOption(option);
+
+        // 监听窗口大小变化
+        window.addEventListener('resize', function () {
+            myChart.resize();
+        });
+
+        // 初始调整大小
+        setTimeout(() => {
+            myChart.resize();
+        }, 100);
+
+        console.log('图表初始化成功');
+        }
+
+        // 页面加载完成后初始化图表
+        document.addEventListener('DOMContentLoaded', function () {
+            initDetailChart();
+
+            // 初始化所有accordion
+            const accordions = document.querySelectorAll('.accordion-button');
+            accordions.forEach(button => {
+                button.addEventListener('click', function () {
+                    // 如果iframe在模态框中，调整iframe高度
+                    if (window.parent !== window) {
+                        setTimeout(() => {
+                            const height = document.body.scrollHeight;
+                            window.parent.postMessage({
+                                type: 'iframe-resize',
+                                height: height
+                            }, '*');
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // 如果是通过iframe加载的，通知父页面调整高度
+        if (window.parent !== window) {
+            // 页面加载完成后通知父页面调整iframe高度
+            window.addEventListener('load', function () {
+                setTimeout(() => {
+                    const height = document.body.scrollHeight;
+                    window.parent.postMessage({
+                        type: 'iframe-resize',
+                        height: height
+                    }, '*');
+                }, 500);
+            });
+        }
+    </script>
+</body>
+
+</html>

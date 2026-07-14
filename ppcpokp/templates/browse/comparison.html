@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}
+{% endblock title %}
+
+{% block include %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.24.1/bootstrap-table.min.css">
+<!-- 引入 noUiSlider -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.css" />
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/browse.css') }}">
+{% endblock include %}
+
+{% block content %}
+<div class="container">
+
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mt-2 mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('index.index') }}">Home</a></li>
+            <li class="breadcrumb-item">Browse</li>
+            <li class="breadcrumb-item active" aria-current="page">Model External Comparison</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-3 col-sm-12">
+
+            <!-- 侧边栏 -->
+            <div class="sidebar" id="sidebar">
+                <!-- 统一使用一个表单 -->
+                <form id="filterForm">
+                    <label for="modelName" class="form-label fw-bold">Model Name</label>
+                    <div class="d-flex mb-3">
+                        <input name="model_name" id="model_name" class="form-control me-2" type="search"
+                            placeholder="Model Name" aria-label="Search" autocomplete="off">
+                    </div>
+
+                    <label for="publicationYear" class="form-label fw-bold">Publication Year</label>
+                    <!-- 滑块容器 -->
+                    <div id="yearRangeSlider" class="mb-4"></div>
+                    <!-- 隐藏字段用于存储滑块值 -->
+                    <input type="hidden" id="minYearInput" name="minYear" value="2005">
+                    <input type="hidden" id="maxYearInput" name="maxYear" value="2025">
+                    <br>
+
+                    <label for="targetOutcome" class="form-label fw-bold">Target Outcome</label>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomeARDS" name="target_outcome"
+                            value="ARDS" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomeARDS">
+                            ARDS
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomePneumonia"
+                            name="target_outcome" value="Pneumonia" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomePneumonia">
+                            Pneumonia
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomePPCs" name="target_outcome"
+                            value="PPCs" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomePPCs">
+                            PPCs
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomePulmonaryEmbolism"
+                            name="target_outcome" value="Pulmonary embolism" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomePulmonaryEmbolism">
+                            Pulmonary embolism
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="targetOutcomeRespiratoryFailure"
+                            name="target_outcome" value="Respiratory failure" autocomplete="off">
+                        <label class="form-check-label" for="targetOutcomeRespiratoryFailure">
+                            Respiratory failure
+                        </label>
+                    </div>
+
+                    <label for="modelType" class="form-label fw-bold">Model Type</label>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="traditionalStatisticalModel"
+                            name="model_type" value="Traditional Statistical Model" autocomplete="off">
+                        <label class="form-check-label" for="traditionalStatisticalModel">
+                            Traditional Statistical Model
+                        </label>
+                    </div>
+
+                    <button type="button" class="btn btn-outline-secondary w-100" onclick="resetFilters()">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-9 col-sm-12">
+            <div id="table-container" class="table-container position-relative">
+                {% include 'browse/partials/table_list.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.24.1/bootstrap-table.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js"></script>
+<script src="{{ url_for('static', filename='Scripts/comparison.js') }}"></script>
+<script src="{{ url_for('static', filename='Scripts/browse.js') }}"></script>
+{% endblock script %}

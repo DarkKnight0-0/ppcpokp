@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+{% block title %}
+Search
+{% endblock title %}
+
+{% block include %}
+<style>
+     :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --accent-color: #e74c3c;
+        --light-gray: #f8f9fa;
+        --border-color: #dee2e6;
+    }
+
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    .card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 25px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 600;
+        padding: 18px 25px;
+        border-bottom: none;
+    }
+
+    .card-body {
+        padding: 30px;
+    }
+    .form-header {
+        border-bottom: 2px solid #dee2e6;
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .btn-example {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-example:hover {
+        background-color: #5a6268;
+        color: white;
+    }
+
+    .btn-clear {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-clear:hover {
+        background-color: #c82333;
+        color: white;
+    }
+
+    .btn-submit {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .btn-submit:hover {
+        background-color: #0b5ed7;
+        color: white;
+    }
+
+    .textarea-counter {
+        font-size: 0.85rem;
+        color: #6c757d;
+        text-align: right;
+        margin-top: 5px;
+    }
+
+    .search-type-btn.active {
+        font-weight: bold;
+        box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+    }
+</style>
+{% endblock include %}
+
+{% block content %}
+<div class="container pt-2">
+
+<nav aria-label="breadcrumb" class="breadcrumb-nav mt-2 mb-4">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{{ url_for('index.index') }}">Home</a></li>
+        <li class="breadcrumb-item">Search</li>
+        <li class="breadcrumb-item active" aria-current="page">Batch Search</li>
+    </ol>
+</nav>
+    
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    <i class="bi bi-search me-2"></i>
+                    Batch Search
+                </div>
+                <div class="card-body">
+                    <!-- 检索类型选择 -->
+                    <div class="mb-4">
+                        <label class="form-label mb-2">Model Style Type:</label>
+                        <div class="btn-group w-100" role="group" aria-label="Model Style Type">
+                            <input type="radio" class="btn-check" name="searchType" id="development" value="development"
+                                autocomplete="off" checked>
+                            <label class="btn btn-outline-primary" for="development">Model Development</label>
+
+                            <input type="radio" class="btn-check" name="searchType" id="validation" value="validation"
+                                autocomplete="off">
+                            <label class="btn btn-outline-primary" for="validation">Model External Validation</label>
+
+                            <input type="radio" class="btn-check" name="searchType" id="comparison" value="comparison"
+                                autocomplete="off">
+                            <label class="btn btn-outline-primary" for="comparison">Model External Comparison</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 批量输入文本框 -->
+            <div class="mb-4">
+                <label for="batchInput" class="form-label">Batch Input (one search term per line):</label>
+                <textarea class="form-control" id="batchInput" rows="16"
+                    placeholder="Please enter search terms, one per line..."></textarea>
+                <div class="textarea-counter">
+                    <span id="lineCount">0</span> lines entered
+                </div>
+            </div>
+
+            <!-- 检索词类型选择 -->
+            <div class="mb-4">
+                <label class="form-label mb-2">Select Search Term Type:</label>
+                <div class="btn-group w-100" role="group" aria-label="Search Term Type">
+                    <input type="radio" class="btn-check" name="termType" id="modelName" value="modelName"
+                        autocomplete="off">
+                    <label class="btn btn-outline-secondary" for="modelName">Model Name</label>
+
+                    <input type="radio" class="btn-check" name="termType" id="modelId" value="modelId"
+                        autocomplete="off">
+                    <label class="btn btn-outline-secondary" for="modelId">Model ID</label>
+
+                    <input type="radio" class="btn-check" name="termType" id="pmid" value="pmid" autocomplete="off"
+                        checked>
+                    <label class="btn btn-outline-secondary" for="pmid">PMID</label>
+                </div>
+            </div>
+
+            <!-- 按钮区域 -->
+            <div class="d-flex justify-content-between mt-4 mb-2">
+                <button type="button" class="btn btn-example" id="exampleBtn">Example Data</button>
+                <button type="button" class="btn btn-clear" id="clearBtn">Clear Form</button>
+                <button type="button" class="btn btn-submit" id="submitBtn">Submit</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+{% block script %}
+<script>
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function () {
+        // 更新行数计数器
+        const textarea = document.getElementById('batchInput');
+        const lineCountSpan = document.getElementById('lineCount');
+
+        function updateLineCount() {
+            const lines = textarea.value.split('\n').filter(line => line.trim() !== '');
+            lineCountSpan.textContent = lines.length;
+        }
+
+        textarea.addEventListener('input', updateLineCount);
+
+        // 示例按钮点击事件
+        document.getElementById('exampleBtn').addEventListener('click', function () {
+            // 根据选择的检索词类型填充不同的示例数据
+            const termType = document.querySelector('input[name="termType"]:checked').value;
+
+            let exampleData = '';
+            if (termType === 'pmid') {
+                exampleData = '39262206\n39534881\n39107163';
+            } else if (termType === 'modelId') {
+                exampleData = 'TSM2025-002\nHLS2025-001\nTSM2025-001';
+            } else if (termType === 'modelName') {
+                exampleData = 'A Nomogram for Predicting Postoperative Pulmonary Complications in Critical Patients Transferred to ICU After Abdominal Surgery\nDynamic nomogram for RP prediction\nscore for prediction of postoperative respiratory complications (SPORC)';
+            }
+
+            textarea.value = exampleData;
+            updateLineCount();
+        });
+
+        // 清空按钮点击事件
+        document.getElementById('clearBtn').addEventListener('click', function () {
+            textarea.value = '';
+            updateLineCount();
+
+            // 重置检索类型为默认值
+            document.getElementById('development').checked = true;
+
+            // 重置检索词类型为默认值
+            document.getElementById('pmid').checked = true;
+        });
+
+        // 提交按钮点击事件
+        document.getElementById('submitBtn').addEventListener('click', function () {
+            // 获取文本区域内容
+            const inputText = textarea.value.trim();
+
+            if (!inputText) {
+                alert('At least one search term is required.');
+                return;
+            }
+
+            // 将文本按行分割，过滤空行
+            const lines = inputText.split('\n').filter(line => line.trim() !== '');
+
+            // 获取检索类型
+            const searchType = document.querySelector('input[name="searchType"]:checked').value;
+
+            // 获取检索词类型
+            const termType = document.querySelector('input[name="termType"]:checked').value;
+
+            // 根据检索词类型确定参数名
+            let paramName = '';
+            switch (termType) {
+                case 'pmid':
+                    paramName = 'pmid';
+                    break;
+                case 'modelId':
+                    paramName = 'model_ids';
+                    break;
+                case 'modelName':
+                    paramName = 'model_names';
+                    break;
+            }
+
+            // 构建查询字符串（格式：param=value1&param=value2&param=value3）
+            let queryString = '';
+            lines.forEach((line, index) => {
+                if (index > 0) queryString += '&';
+                queryString += `${paramName}=${encodeURIComponent(line.trim())}`;
+            });
+
+            // 根据检索类型确定目标URL
+            let targetUrl = '';
+            switch (searchType) {
+                case 'development':
+                    targetUrl = 'development';
+                    break;
+                case 'validation':
+                    targetUrl = 'validation';
+                    break;
+                case 'comparison':
+                    targetUrl = 'comparison';
+                    break;
+            }
+
+            // 构建完整URL并跳转
+            const fullUrl = `${targetUrl}?${queryString}`;
+            console.log('跳转URL:', fullUrl);
+
+            // 在实际应用中，取消下面这行的注释以执行跳转
+            window.location.href = fullUrl;
+        });
+
+        // 初始化行数计数
+        updateLineCount();
+
+        // 检索词类型变更时更新示例按钮的提示
+        const termTypeRadios = document.querySelectorAll('input[name="termType"]');
+        termTypeRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                // 当检索词类型变更时，清空文本框
+                textarea.value = '';
+                updateLineCount();
+            });
+        });
+    });
+</script>
+{% endblock script %}

@@ -1,0 +1,549 @@
+/* 自定义 noUiSlider 样式 */
+#yearRangeSlider {
+    height: 10px;
+    margin: 30px 0;
+}
+
+#yearRangeSlider .noUi-connect {
+    background: #198754;
+}
+
+#yearRangeSlider .noUi-handle {
+    height: 24px;
+    width: 24px;
+    top: -8px;
+    right: -12px;
+    /* 中心对齐 */
+    border-radius: 50%;
+    border: 2px solid #198754;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#yearRangeSlider .noUi-handle:before,
+#yearRangeSlider .noUi-handle:after {
+    display: none;
+}
+
+/* list表格 */
+/* list表格 */
+/* list表格 */
+/* 更具体的选择器，提高优先级 */
+table td.item-name,
+table th.item-name {
+    width: 200px;
+    vertical-align: top;
+    padding-left: 20px;
+    font-size: 1.1em !important;
+    /* 比父元素大10% */
+    font-weight: bold !important;
+}
+
+/* 简化版本：深蓝色背景，白色文字 */
+#table thead th {
+    background-color: #003153 !important;
+    color: #ffffff !important;
+    border-color: #1d4ed8 !important;
+}
+
+/* 分组头部样式 */
+.group-header {
+    --bs-table-bg: #e6f7ff !important;
+    /* 覆盖Bootstrap变量 */
+    background-color: var(--bs-table-bg) !important;
+    color: #000000 !important;
+}
+
+.group-header td {
+    --bs-table-bg: #e6f7ff !important;
+    /* 覆盖单元格的变量 */
+    background-color: inherit !important;
+    color: inherit !important;
+    font-weight: bold;
+    font-size: 1.05em;
+    padding: 10px 15px !important;
+}
+
+/* 分组内行的样式 */
+#table tbody tr:not(.group-header) {
+    border-left: 1px solid #dee2e6;
+}
+
+/* 分组内交替行颜色 */
+#table tbody tr:not(.group-header):nth-child(even) {
+    background-color: #fafafa;
+}
+
+
+
+/* 模态框样式 */
+.modal-cover {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    max-width: 100%;
+}
+
+.modal-header {
+    background-color: #003153 !important;
+    color: #ffffff !important;
+}
+
+/* Detail 模态框 */
+/* Detail 模态框 */
+/* Detail 模态框 */
+/* 表格容器样式 */
+#table-container {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+    /* 确保有最小高度 */
+}
+
+/* 模态框覆盖样式 */
+#detailModal {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 1.5rem);
+    max-width: 100%;
+    height: 100vh;
+    z-index: 2000;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+@media (min-width: 576px) {
+    #detailModal {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    #detailModal {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    #detailModal {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    #detailModal {
+        max-width: 1140px;
+    }
+}
+
+@media (min-width: 1400px) {
+    #detailModal {
+        max-width: 1320px;
+    }
+}
+
+#detailModal.show {
+    display: block;
+}
+
+#detailModal.fade:not(.show) {
+    opacity: 0;
+}
+
+#detailModal.fade {
+    transition: opacity 0.15s linear;
+}
+
+#detailModal.show {
+    opacity: 1;
+}
+
+/* 模态框对话框样式 */
+#detailModal .modal-dialog {
+    margin: 0;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100vh;
+}
+
+#detailModal .modal-content {
+    height: 100%;
+    max-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0;
+}
+
+/* 模态框主体区域 */
+#detailModal .modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+/* 点击效果 */
+.clickable-title:hover {
+    text-decoration: underline;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+
+    #detailModal .modal-header,
+    #detailModal .modal-footer {
+        padding: 0.5rem;
+    }
+
+    #detailModal .modal-body {
+        padding: 0.75rem;
+    }
+}
+
+/* 防止Bootstrap背景遮罩层干扰 */
+body.modal-open {
+    overflow: auto !important;
+    padding-right: 0 !important;
+}
+
+.modal-backdrop {
+    display: none !important;
+}
+
+/* Detail Accordion 样式调整 */
+/* Detail Accordion 样式调整 */
+/* Detail Accordion 样式调整 */
+.accordion-button:not(.collapsed) .accordion-icon {
+    transform: rotate(180deg);
+}
+
+.accordion-button {
+    font-size: 1.1rem !important;
+    font-weight: bold !important;
+    background-color: #e6f7ff !important;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0, 0, 0, .125);
+}
+
+.accordion-icon {
+    transition: transform 0.3s ease;
+}
+
+.table-borderless td {
+    border: none !important;
+}
+
+
+body {
+
+    background-color: #f8f9fa;
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+}
+
+
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: 100%;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.card-header-excellent {
+    background: linear-gradient(135deg, #f5f7fa 0%, #F5CBD8 100%);
+    border-bottom: none;
+    border-radius: 15px 15px 0 0 !important;
+    padding: 1.2rem 1.5rem;
+}
+
+.card-header-good {
+    background: linear-gradient(135deg, #f5f7fa 0%, #E9D9F3 100%);
+    border-bottom: none;
+    border-radius: 15px 15px 0 0 !important;
+    padding: 1.2rem 1.5rem;
+}
+
+.card-header-fair {
+    background: linear-gradient(135deg, #f5f7fa 0%, #F8E0C5 100%);
+    border-bottom: none;
+    border-radius: 15px 15px 0 0 !important;
+    padding: 1.2rem 1.5rem;
+}
+
+.card-header-poor {
+    background: linear-gradient(135deg, #f5f7fa 0%, #E4F0CB 100%);
+    border-bottom: none;
+    border-radius: 15px 15px 0 0 !important;
+    padding: 1.2rem 1.5rem;
+}
+
+.card-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.model-id {
+    background-color: #3498db;
+    color: white;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.chart-container {
+    height: 220px;
+    width: 100%;
+}
+
+.pagination-container {
+
+    margin: 2rem 0;
+
+}
+
+
+
+.page-item.active .page-link {
+
+    background-color: #3498db;
+
+    border-color: #3498db;
+
+}
+
+
+
+.page-link {
+
+    color: #3498db;
+
+}
+
+
+
+.search-box {
+
+    max-width: 500px;
+
+    margin: 0 auto 2rem;
+
+}
+
+
+
+.loading {
+
+    text-align: center;
+
+    padding: 3rem;
+
+    color: #7f8c8d;
+
+}
+
+
+
+.loading-spinner {
+
+    width: 3rem;
+
+    height: 3rem;
+
+    margin: 0 auto 1rem;
+
+}
+
+
+
+.no-results {
+
+    text-align: center;
+
+    padding: 3rem;
+
+    color: #95a5a6;
+
+}
+
+
+
+/* Bootstrap Table 样式调整 */
+
+.fixed-table-toolbar {
+
+    margin-bottom: 1rem;
+
+}
+
+
+
+.fixed-table-toolbar .search {
+
+    float: right;
+
+    margin-left: 15px;
+
+}
+
+
+
+.fixed-table-toolbar .search input {
+
+    width: 200px;
+
+    transition: width 0.3s;
+
+}
+
+
+
+.fixed-table-toolbar .search input:focus {
+
+    width: 300px;
+
+}
+
+
+
+.fixed-table-pagination {
+
+    margin-top: 2rem;
+
+}
+
+
+
+.fixed-table-pagination .pagination-detail {
+
+    float: left;
+
+    line-height: 34px;
+
+    margin-right: 5px;
+
+}
+
+
+
+/* 移除旧的分页样式 */
+
+.pagination-container nav {
+
+    display: none;
+
+}
+
+
+
+/* 调整主内容区 */
+
+.main-content {
+
+    background: white;
+
+    border-radius: 10px;
+
+    padding: 20px;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+}
+
+
+
+/* 搜索框样式优化 */
+
+.search .input-group {
+
+    width: 300px;
+
+}
+
+
+
+.search .input-group-text {
+
+    background-color: #f8f9fa;
+
+    border-right: none;
+
+}
+
+
+
+.search .form-control {
+
+    padding-left: 0;
+
+}
+
+/* 简单高度修复 */
+body,
+html {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* 表格容器最小高度 */
+#table-container {
+    position: relative;
+    min-height: 600px;
+}
+
+/* 如果表格为空，也要保持高度 */
+.fixed-table-body {
+    min-height: 300px;
+}
+
+/* 模态框不影响页面布局 */
+.modal-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    max-width: 100%;
+}
+
+/* 如果你的导航栏是固定定位，提高它的z-index */
+.navbar {
+    z-index: 1070 !important;
+}
+
+.navbar .dropdown-menu {
+    z-index: 1080 !important;
+}
+
+/* 提高模态框层级，避免被导航栏覆盖 */
+#detailModal {
+    z-index: 2000 !important;
+}
+
+.modal-backdrop {
+    z-index: 1999 !important;
+}

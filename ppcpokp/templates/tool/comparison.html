@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block title %}Model Comparison{% endblock %}
+
+{% block include %}
+<!-- ECharts & Bootstrap Table 样式（用于卡片雷达图） -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.24.1/bootstrap-table.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/browse.css') }}">
+<style>
+    /* 右侧备选库悬浮固定 */
+    .sticky-sidebar {
+        position: sticky;
+        top: 20px;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+    }
+
+    .selected-model-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        /* 顶部对齐，适应多行文本 */
+        padding: 8px 12px;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        background-color: #f8f9fa;
+    }
+
+    .selected-model-item .model-info {
+        flex: 1;
+        /* 占据剩余宽度 */
+        overflow: hidden;
+        /* 防止溢出 */
+    }
+
+    .selected-model-item .model-info small {
+        display: block;
+        /* 换行显示 */
+        color: #6c757d;
+        font-size: 0.85em;
+        line-height: 1.2;
+        margin-top: 2px;
+    }
+
+
+    .compare-btn-container {
+        margin-top: 20px;
+    }
+
+    /* 卡片底部按钮 */
+    .card-footer .btn-add {
+        width: 100%;
+    }
+
+    .card-body{
+        flex:0 0 auto !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mt-2 mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('index.index') }}">Home</a></li>
+            <li class="breadcrumb-item">Tool</li>
+            <li class="breadcrumb-item active" aria-current="page">Model Comparison</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- 左侧检索区域：col-8 -->
+        <div class="col-lg-8">
+
+            <!-- 检索表单 -->
+            <form id="comparisonForm">
+                <!-- 三行精确/模糊输入 -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light blue-header">
+                        <h5 class="mb-0"><i class="bi bi-search me-2"></i>Search Criteria</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">PMID (exact)</label>
+                                <input type="text" class="form-control" name="pmid" autocomplete="off">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Model Name (fuzzy)</label>
+                                <input type="text" class="form-control" name="model_name" autocomplete="off">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Model ID (exact)</label>
+                                <input type="text" class="form-control" name="model_id" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Basic Matching 卡片 -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light blue-header">
+                        <h5 class="mb-0"><i class="bi bi-sliders2 me-2"></i>Basic Matching</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Patient Population 多选 -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Patient Population</label>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="population_category"
+                                            value="General Surgical Population" id="popGeneral">
+                                        <label class="form-check-label" for="popGeneral">General Surgical
+                                            Population</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="population_category"
+                                            value="Pediatric Population" id="popPediatric">
+                                        <label class="form-check-label" for="popPediatric">Pediatric Population</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="population_category"
+                                            value="Older Adults / Elderly" id="popElderly">
+                                        <label class="form-check-label" for="popElderly">Older Adults / Elderly</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="population_category"
+                                            value="High-Risk Patients" id="popHighRisk">
+                                        <label class="form-check-label" for="popHighRisk">High-Risk Patients</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Surgical Specialty 多选 -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Surgical Specialty</label>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="surgery_discipline"
+                                            value="General Surgery" id="surgGeneral">
+                                        <label class="form-check-label" for="surgGeneral">General Surgery</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="surgery_discipline"
+                                            value="Thoracic Surgery" id="surgThoracic">
+                                        <label class="form-check-label" for="surgThoracic">Thoracic Surgery</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="surgery_discipline"
+                                            value="Cardiac Surgery" id="surgCardiac">
+                                        <label class="form-check-label" for="surgCardiac">Cardiac Surgery</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="surgery_discipline"
+                                            value="Orthopedic / Spine Surgery" id="surgOrtho">
+                                        <label class="form-check-label" for="surgOrtho">Orthopedic / Spine
+                                            Surgery</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="surgery_discipline"
+                                            value="Neurosurgery" id="surgNeuro">
+                                        <label class="form-check-label" for="surgNeuro">Neurosurgery</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="surgery_discipline"
+                                            value="Mixed / Non-specific Surgery" id="surgMixed">
+                                        <label class="form-check-label" for="surgMixed">Mixed / Non-specific
+                                            Surgery</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Target Outcome 多选（沿用 recommendation 的选项） -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Target Outcome</label>
+                            <div class="row g-2">
+                                {% include 'tool/_target_outcome_checkboxes.html' %}
+                            </div>
+                        </div>
+
+                        <!-- Timing of Prediction 多选（新增复选框） -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Timing of Prediction</label>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="timing_prediction"
+                                            value="Preoperative" id="timingPre">
+                                        <label class="form-check-label" for="timingPre">Preoperative</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="timing_prediction"
+                                            value="Intraoperative" id="timingIntra">
+                                        <label class="form-check-label" for="timingIntra">Intraoperative</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="timing_prediction"
+                                            value="Postoperative" id="timingPost">
+                                        <label class="form-check-label" for="timingPost">Postoperative</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Matching 卡片 -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light blue-header">
+                        <h5 class="mb-0"><i class="bi bi-gear me-2"></i>Advanced Matching</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Model Variables Number 多选区间 -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Model Variables Number</label>
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="variable_number_range"
+                                            value="2-4" id="var2_4">
+                                        <label class="form-check-label" for="var2_4">2 - 4</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="variable_number_range"
+                                            value="5-10" id="var5_10">
+                                        <label class="form-check-label" for="var5_10">5 - 10</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="variable_number_range"
+                                            value="11-15" id="var11_15">
+                                        <label class="form-check-label" for="var11_15">11 - 15</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="variable_number_range"
+                                            value="16+" id="var16">
+                                        <label class="form-check-label" for="var16">16+</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Clinical Application Modality 多选（沿用 recommendation 的选项） -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Clinical Application Modality</label>
+                            <div class="row g-2">
+                                {% include 'tool/_modality_checkboxes.html' %}
+                            </div>
+                        </div>
+
+                        <!-- 检索按钮 -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-primary" id="searchBtn"><i
+                                    class="bi bi-search me-1"></i>Find Models</button>
+                            <button type="button" class="btn btn-outline-secondary" id="resetBtn"><i
+                                    class="bi bi-arrow-repeat me-1"></i>Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- 检索结果卡片区域 -->
+            <div id="results-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Results (<span id="resultCount">0</span>)</h5>
+                    <!-- 可选的分页大小等 -->
+                </div>
+                <div id="data-container" class="row">
+                    <!-- 卡片动态生成 -->
+                </div>
+                <!-- 加载状态 -->
+                <div id="loading" class="loading" style="display: none;">
+                    <div class="spinner-border text-primary loading-spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h4>Loading...</h4>
+                </div>
+                <!-- 无结果提示 -->
+                <div id="no-results" class="no-results" style="display: none;">
+                    <i class="fas fa-search fa-3x mb-3"></i>
+                    <h4>No results found.</h4>
+                    <p>Try other keywords.</p>
+                </div>
+                <!-- 分页 -->
+                <div class="fixed-table-pagination">
+                    <div class="float-start pagination-detail">
+                        <span class="pagination-info" id="pagination-info"></span>
+                    </div>
+                    <div class="float-end">
+                        <ul class="pagination" id="bootstrap-pagination"></ul>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧备选模型库：col-4 悬浮固定 -->
+        <div class="col-lg-4">
+            <div class="sticky-sidebar">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light blue-header">
+                        <h5 class="mb-0"><i class="bi bi-collection me-2"></i>Selected Models (<span
+                                id="selectedCount">0</span>/6)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="selectedModelsList">
+                            <!-- 已选模型动态插入 -->
+                            <p class="text-muted text-center">No models selected.</p>
+                        </div>
+                        <div class="compare-btn-container">
+                            <button class="btn btn-success w-100" id="compareBtn" disabled>Compare Selected
+                                Models</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<!-- 引入 ECharts 和自定义脚本 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/6.0.0/echarts.min.js"></script>
+<script src="{{ url_for('static', filename='Scripts/common.js') }}"></script>
+<script src="{{ url_for('static', filename='Scripts/tool_comparison.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,79 @@
+<div id="table-container" class="table-container position-relative">
+    <!-- Bootstrap Table 工具栏 -->
+    <div class="fixed-table-toolbar pt-2">
+        <div class="float-end search">
+            <div class="input-group">
+                <input type="text" id="search-input" class="form-control" placeholder="Search">
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 数据展示区域 -->
+        <div id="data-container" class="row">
+            <!-- 数据卡片将动态生成在这里 -->
+        </div>
+
+        <!-- 加载状态 -->
+        <div id="loading" class="loading">
+            <div class="spinner-border text-primary loading-spinner" role="status">
+                <span class="visually-hidden">Loading..</span>
+            </div>
+            <h4>Loading...</h4>
+        </div>
+
+        <!-- 无结果提示 -->
+        <div id="no-results" class="no-results" style="display: none;">
+            <i class="fas fa-search fa-3x mb-3"></i>
+            <h4>No results found.</h4>
+            <p>Try other keywords.</p>
+        </div>
+
+        <!-- Bootstrap Table 分页 -->
+        <div class="fixed-table-pagination">
+            <div class="float-start pagination-detail">
+                <span class="pagination-info" id="pagination-info"></span>
+            </div>
+            <div class="float-end">
+                <ul class="pagination" id="bootstrap-pagination">
+                    <!-- Bootstrap Table 样式分页将动态生成在这里 -->
+                </ul>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
+
+    <!-- 覆盖表格的模态框 -->
+    <!-- 修改 development.html 中的模态框部分 -->
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-light py-2">
+                    <h5 class="modal-title" id="detailModalLabel">Model Detail</h5>
+                    <button type="button" class="btn-close btn-close-white btn-sm" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0" style="min-height: 500px;">
+                    <!-- iframe 容器 -->
+                    <div id="iframe-container" class="h-100 w-100">
+                        <div class="d-flex justify-content-center align-items-center h-100 w-100"
+                            style="min-height: 400px;">
+                            <div class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading detail...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light py-2">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

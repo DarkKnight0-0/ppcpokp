@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Submit a Model{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mt-2 mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('index.index') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Submit</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <form method="post" action="{{ url_for('submit.submit') }}">
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light blue-header">
+                        <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Model Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Model Name -->
+                        <div class="mb-3">
+                            <label for="modelName" class="form-label fw-bold">Model Name</label>
+                            <input type="text" class="form-control" id="modelName" name="model_name"
+                                placeholder="e.g., Nomogram" required>
+                        </div>
+
+                        <!-- Target Outcome (下拉菜单) -->
+                        <div class="mb-3">
+                            <label for="targetOutcome" class="form-label fw-bold">Target Outcome</label>
+                            <select class="form-select" id="targetOutcome" name="target_outcome" required>
+                                <option value="" disabled selected>-- Select a Target Outcome --</option>
+                                <option value="ARDS">ARDS</option>
+                                <option value="Atelectasis">Atelectasis</option>
+                                <option value="Pleural effusion">Pleural effusion</option>
+                                <option value="Pneumonia">Pneumonia</option>
+                                <option value="Pneumothorax">Pneumothorax</option>
+                                <option value="PPCs">PPCs</option>
+                                <option value="Pulmonary embolism">Pulmonary embolism</option>
+                                <option value="Respiratory failure">Respiratory failure</option>
+                                <option value="Respiratory infection">Respiratory infection</option>
+                            </select>
+                        </div>
+
+                        <!-- PMID -->
+                        <div class="mb-3">
+                            <label for="pmid" class="form-label fw-bold">PMID</label>
+                            <input type="text" class="form-control" id="pmid" name="pmid"
+                                placeholder="PubMed ID (if available)">
+                        </div>
+
+                        <!-- Title -->
+                        <div class="mb-3">
+                            <label for="title" class="form-label fw-bold">Title</label>
+                            <input type="text" class="form-control" id="title" name="title"
+                                placeholder="Article or model title">
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light blue-header">
+                        <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Contact Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Your Name -->
+                        <div class="mb-3">
+                            <label for="yourName" class="form-label fw-bold">Your Name</label>
+                            <input type="text" class="form-control" id="yourName" name="your_name"
+                                placeholder="John Doe">
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-bold">E-mail</label>
+                            <input type="email" class="form-control" id="email" name="email"
+                                placeholder="you@example.com">
+                        </div>
+
+                        <!-- Note -->
+                        <div class="mb-3">
+                            <label for="note" class="form-label fw-bold">Note</label>
+                            <textarea class="form-control" id="note" name="note" rows="3"
+                                placeholder="Any additional information..."></textarea>
+                        </div>
+
+                        <!-- Submit button -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-send me-1"></i>Submit</button>
+                            <a href="{{ url_for('submit.submit') }}" class="btn btn-outline-secondary"><i
+                                    class="bi bi-arrow-repeat me-1"></i>Reset</a>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Model Comparison Result{% endblock %}
+
+{% block include %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/browse.css') }}">
+<!-- ECharts -->
+<style>
+    /* 顶部雷达图容器（左侧雷达，右侧图例） */
+    #comparison-radar {
+        width: 100%;
+        height: 400px;
+        margin-bottom: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mt-2 mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('index.index') }}">Home</a></li>
+            <li class="breadcrumb-item">Tool</li>
+            <li class="breadcrumb-item"><a href="{{ url_for('tool.comparison') }}">Model Comparison</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Model Comparison Result</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div id="table-container" class="table-container position-relative">
+            <div class="col-12">
+                <!-- 顶部雷达图 -->
+                <div id="comparison-radar"></div>
+            </div>
+
+            <!-- 下方模型卡片列表 -->
+            <div id="data-container" class="row"></div>
+
+            <!-- 详情模态框 -->
+            <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header bg-light py-2">
+                            <h5 class="modal-title" id="detailModalLabel">Model Detail</h5>
+                            <button type="button" class="btn-close btn-close-white btn-sm" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-0" style="min-height: 500px;">
+                            <div id="iframe-container" class="h-100 w-100">
+                                <!-- 初始加载状态 -->
+                                <div class="d-flex justify-content-center align-items-center h-100 w-100"
+                                    style="min-height: 400px;">
+                                    <div class="text-center">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p class="mt-2">Loading detail...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer bg-light py-2">
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/6.0.0/echarts.min.js"></script>
+<script src="{{ url_for('static', filename='Scripts/common.js') }}"></script>
+<script>
+    (function () {
+        // 从后端传入的模型数据
+        const models = {{ models | tojson
+    }};
+    const DETAIL_URL = "{{ url_for('browse.development_detail') }}";
+
+    if (!models || models.length === 0) {
+        document.getElementById('data-container').innerHTML = '<div class="col-12"><div class="alert alert-warning text-center">No models found for comparison.</div></div>';
+        return;
+    }
+
+    // 1. 绘制顶部多系列雷达图
+    drawComparisonRadar(models);
+
+    // 2. 渲染下方卡片
+    renderCards(models);
+
+    // 3. 为卡片绑定点击事件
+    document.querySelectorAll('.model-card').forEach(card => {
+        card.addEventListener('click', function (e) {
+            const modelId = this.dataset.id;
+            showDetailModal(modelId, DETAIL_URL);
+        });
+    });
+
+    // 4. 初始化每个卡片内的小雷达图
+    models.forEach(model => {
+        const chartId = `chart-${model.model_id}`;
+        setTimeout(() => {
+            initRadarChart(chartId, model, scoreToLevel(model.score));
+        }, 100);
+    });
+
+    // ---------- 函数定义 ----------
+    function drawComparisonRadar(models) {
+        const chartDom = document.getElementById('comparison-radar');
+        if (!chartDom) return;
+        const myChart = echarts.init(chartDom);
+
+        const indicators = [
+            { name: 'Study design', max: 1 },
+            { name: 'Study setting', max: 2 },
+            { name: 'Sample size', max: 2 },
+            { name: 'Discrimination (AUC)', max: 2 },
+            { name: 'Calibration', max: 2 },
+            { name: 'Validation', max: 2 },
+            { name: 'Clinical usability', max: 2 }
+        ];
+
+        const seriesData = models.map(model => ({
+            value: [
+                model.study_design || 0,
+                model.study_setting || 0,
+                model.sample_size_score || 0,
+                model.discrimination || 0,
+                model.calibration || 0,
+                model.validation || 0,
+                model.clinical_usability || 0
+            ],
+            name: model.model_name
+        }));
+
+        const option = {
+            color: ['#5470c6', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],
+            tooltip: { trigger: 'item' },
+            legend: {
+                orient: 'vertical',
+                right: 200,
+                top: 'center',
+                itemWidth: 12,
+                itemHeight: 8,
+                textStyle: { fontSize: 12, overflow: 'truncate', width: 400 },
+                tooltip: { show: true }
+            },
+            radar: {
+                indicator: indicators,
+                shape: 'circle',
+                center: ['30%', '50%'],
+                radius: '65%',
+                name: { textStyle: { fontSize: 12, fontWeight: 'bold', color: '#333' } },
+                splitArea: { areaStyle: { color: ['rgba(52,152,219,0.1)', 'rgba(52,152,219,0.05)'] } },
+                axisLine: { lineStyle: { color: 'rgba(52,152,219,0.3)' } }
+            },
+            series: [{
+                type: 'radar',
+                data: seriesData,
+                symbol: 'circle',
+                symbolSize: 6,
+                lineStyle: { width: 2 },
+                areaStyle: { opacity: 0.2 }
+            }]
+        };
+        myChart.setOption(option);
+        window.addEventListener('resize', () => myChart.resize());
+    }
+
+    // 渲染下方卡片
+    function renderCards(models) {
+        const container = document.getElementById('data-container');
+        container.innerHTML = '';
+        models.forEach(model => {
+            const col = document.createElement('div');
+            col.className = 'col-12 col-xl-6 py-2';
+            col.innerHTML = createCardHTML(model);
+            container.appendChild(col);
+        });
+    }
+
+    // 生成卡片 HTML
+    function createCardHTML(item) {
+        const level = scoreToLevel(item.score);
+        const logo = modelTypeToLogo(item.model_type);
+        return `
+                <div class="card h-100 model-card" data-id="${item.model_id}" style="cursor: pointer;">
+                    <div class="card-header-${level}">
+                        <h5 class="card-title mt-2 clickable-title text-truncate">${escapeHtml(item.model_name || 'N/A')}</h5>
+                        <span class="model-id text-nowrap ms-2">ID: ${item.model_id || ''}</span>
+                        <span class="icon icon-${logo} icon--36"></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <h6 class="card-title text-center">Model Score System</h6>
+                                <div class="chart-container" id="chart-${item.model_id}" style="height:180px; width:100%;"></div>
+                            </div>
+                            <div class="col-md-5">
+                                <h6 class="card-title text-center">Model Preview</h6>
+                                <table class="table table-striped profile-table table-${level}">
+                                    <tbody>
+                                        <tr><th class="align-middle text-center">AUC</th><td class="align-middle text-center">${item.auc0 || 'N/A'}</td></tr>
+                                        <tr><th class="align-middle text-center">Sensitivity</th><td class="align-middle text-center">${item.sensitivity0 || 'N/A'}</td></tr>
+                                        <tr><th class="align-middle text-center">Specificity</th><td class="align-middle text-center">${item.specificity0 || 'N/A'}</td></tr>
+                                        <tr><th class="align-middle text-center">Calibration</th><td class="align-middle text-center">${item.calibration0 || 'N/A'}</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <b>Total Score: ${item.score || 'N/A'}/13</b> | Study Setting: ${item.study_setting || 'N/A'} | Sample Size: ${item.sample_size_score || 'N/A'} | Discrimination (AUC): ${item.discrimination || 'N/A'} | Calibration: ${item.calibration || 'N/A'} | Validation: ${item.validation || 'N/A'} | Clinical Usability: ${item.clinical_usability || 'N/A'}
+                                <hr>
+                                <p class="authors-text text-truncate">AU: ${escapeHtml(item.authors || 'N/A')}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+    }
+    }) ();
+</script>
+{% endblock %}

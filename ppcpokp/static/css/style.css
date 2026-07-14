@@ -1,0 +1,1074 @@
+@charset "utf-8";
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    color: #959595;
+    font: normal 14px/1.8em Arial, Helvetica, sans-serif;
+    background: #f3f3f3;
+    font-size: 14px;
+}
+
+html,
+.main {
+    padding: 0;
+    margin: 0;
+}
+
+.clr {
+    clear: both;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    font-size: 0px;
+    line-height: 0px;
+}
+
+.logo {
+    padding: 0;
+    margin: 0 auto;
+}
+
+h1 {
+    margin: 0;
+    padding: 15px 0 0;
+    color: #292929;
+    font: bold 38px/1.2em Arial, Helvetica, sans-serif;
+    letter-spacing: -2px;
+    text-align: center;
+}
+
+h1 a,
+h1 a:hover {
+    color: #292929;
+    text-decoration: none;
+}
+
+h1 span {
+    color: #7baf30;
+}
+
+h1 small {
+    display: block;
+    padding: 0;
+    font: normal 13px/1.2em Arial, Helvetica, sans-serif;
+    letter-spacing: normal;
+}
+
+h2 {
+    font: normal 24px Arial, Helvetica, sans-serif;
+    padding: 8px 0;
+    margin: 0;
+    color: #595959;
+}
+
+h3 {
+    font: normal 26px Arial, Helvetica, sans-serif;
+    padding: 28px 0 8px;
+    margin: 0;
+    color: #fffefe;
+    text-transform: uppercase;
+}
+
+p {
+    margin: 8px 0;
+    padding: 0 0 8px 0;
+    font: normal 14px/1.8em Arial, Helvetica, sans-serif;
+}
+
+a {
+    text-decoration: underline;
+}
+
+a.rm,
+a.com {
+    padding: 0;
+    text-decoration: none;
+    color: #7baf30;
+}
+
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
+}
+
+.header,
+.content,
+.menu_nav,
+.fbg,
+.footer,
+form,
+ol,
+ol li,
+ul,
+.content .mainbar,
+.content .sidebar {
+    margin: 0;
+    padding: 0;
+}
+
+/* header */
+.header {
+    padding: 0;
+    background: #0f407b;
+}
+
+.header_resize {
+    margin: 0 auto;
+    width: 1200px;
+    height: 80px;
+}
+
+/* hbg */
+.hbg {
+    width: 970px;
+    padding: 10px 0;
+}
+
+.hbg img {
+    margin: 10px 30px 10px 20px;
+}
+
+.hbg p {
+    color: #fffefe;
+}
+
+.hbg p a {
+    color: #fffefe;
+}
+
+/* content */
+.content {
+    padding: 30px 0;
+    margin: 0 auto;
+    width: 1100px;
+}
+
+.mainbar {
+    margin: 0;
+    padding: 0;
+    float: right;
+    width: 653px;
+}
+
+.mainbar1 {
+    margin: 0;
+    padding: 0;
+    float: right;
+    width: 970px;
+}
+
+.mainbar2 {
+    margin: 0;
+    padding: 0;
+    float: right;
+    width: 970px;
+}
+
+.mainbar3 {
+    margin: 0;
+    padding: 0;
+    float: right;
+    width: 750px;
+}
+
+.mainbar img {
+    padding: 4px;
+    border: 1px solid #f2f2f1;
+    background: #fff;
+}
+
+.mainbar img.fl {
+    margin: 4px 16px 4px 0;
+    float: left;
+}
+
+.mainbar .article {
+    margin: 0 0 10px;
+    padding: 10px 15px 5px;
+}
+
+.mainbar .spec a {
+    padding: 7px 0;
+}
+
+.mainbar a.com {
+    color: #7baf30;
+    background: url(../images/commnet_bg.gif) no-repeat left center;
+    padding-left: 25px;
+}
+
+.sidebar {
+    padding: 0;
+    float: left;
+    width: 300px;
+}
+
+.sidebar .gadget {
+    margin: 0 0 10px;
+    padding: 10px 15px;
+}
+
+ul.sb_menu,
+ul.ex_menu {
+    margin: 0;
+    padding: 0;
+    color: #939393;
+    list-style: none;
+}
+
+ul.sb_menu li,
+ul.ex_menu li {
+    margin: 0;
+}
+
+ul.sb_menu li {
+    padding: 4px 0 4px 0;
+}
+
+ul.ex_menu li {
+    padding: 4px 0 8px 0;
+}
+
+ul.sb_menu li a,
+ul.ex_menu li a {
+    color: #939393;
+    text-decoration: none;
+    margin-left: -12px;
+    padding-left: 12px;
+    font: normal 14px/1.8em Arial, Helvetica, sans-serif;
+}
+
+ul.sb_menu li a:hover,
+ul.ex_menu li a:hover,
+ul.sb_menu li.active a,
+ul.ex_menu li.active a {
+    color: #7baf30;
+}
+
+ul.sb_menu li a:hover {
+    text-decoration: underline;
+}
+
+ul.ex_menu li a:hover {
+    text-decoration: underline;
+}
+
+/* subpages */
+.content .mainbar .comment {
+    margin: 0;
+    padding: 16px 0 0 0;
+}
+
+.content .mainbar .comment img.userpic {
+    border: 1px solid #dedede;
+    margin: 10px 16px 0 0;
+    padding: 0;
+    float: left;
+}
+
+/* table */
+.select,
+#locale {
+    width: 100%;
+}
+
+.like {
+    margin-right: 10px;
+}
+
+/* slide */
+/* Make the image fully responsive */
+.carousel-inner img {
+    width: 100%;
+    height: 100%;
+}
+
+.swiper {
+    width: 100%;
+    height: 100%;
+}
+
+.swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+
+    /* Center slide text vertically */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* fbg */
+.fbg {
+    background: url(../images/fbg_bg.jpg);
+    padding: 20px 0;
+    border-top: 1px solid #fff;
+}
+
+.fbg_resize {
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 1230px;
+}
+
+.fbg h2 {
+    color: #fff;
+}
+
+.fbg img {
+    padding: 4px;
+}
+
+.fbg a {
+    color: #b2fd45;
+}
+
+.fbg p {
+    color: #ffffff;
+}
+
+.fbg .col {
+    margin: 0;
+    float: left;
+    background: url(../images/fbg_line.gif) repeat-y right;
+}
+
+.fbg .c1 {
+    padding: 0 16px 0 0;
+    width: 266px;
+}
+
+.fbg .c2 {
+    padding: 0 16px;
+    width: 580px;
+}
+
+.fbg .c3 {
+    padding: 0 0 0 16px;
+    width: 580px;
+    background: none;
+}
+
+.fbg .c1 img {
+    margin: 8px 16px 8px 0;
+}
+
+.fbg .c3 img {
+    margin: 8px 16px 4px 0;
+    float: left;
+}
+
+/* footer */
+.footer {
+    background: #3d3d3d;
+}
+
+.footer_resize {
+    margin: 0 auto;
+    padding: 20px 0;
+    width: 930px;
+}
+
+.footer .lf {
+    float: left;
+}
+
+.footer .rf {
+    float: right;
+}
+
+.footer p {
+    margin: 0;
+    padding: 4px 0;
+    width: auto;
+    line-height: 1.5em;
+    color: #b1b1b1;
+}
+
+.footer p a {
+    color: #64964d;
+    text-decoration: none;
+}
+
+/* form */
+ol {
+    list-style: none;
+}
+
+ol li {
+    display: block;
+    clear: both;
+}
+
+ol li label {
+    display: block;
+    margin: 0;
+    padding: 16px 0 0 0;
+}
+
+ol li input.text {
+    width: 480px;
+    border: 1px solid #c0c0c0;
+    margin: 2px 0;
+    padding: 5px 2px;
+    height: 16px;
+    background: #fff;
+}
+
+ol li textarea {
+    width: 480px;
+    border: 1px solid #c0c0c0;
+    margin: 2px 0;
+    padding: 2px;
+    background: #fff;
+}
+
+ol li .send {
+    margin: 16px 0 0 0;
+}
+
+/* Search form */
+.search span {
+    width: 250px;
+    display: block;
+    background: #fff;
+    height: 29px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #e7e7e7;
+}
+
+.search input#s {
+    float: left;
+    width: 200px;
+    padding: 7px 0 7px 10px;
+    margin: 0;
+    border: 0;
+    background: none;
+    color: #afaeae;
+    font: normal 12px/15px Arial, Helvetica, sans-serif;
+}
+
+.search .btn {
+    float: left;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    width: auto;
+}
+
+/*=== PageNavi. ===*/
+.pagenavi {
+    clear: both;
+    font: normal 13px Arial, Helvetica, sans-serif;
+    margin: 0 auto;
+    text-align: right;
+    padding: 10px;
+}
+
+.pagenavi a,
+.pagenavi .current {
+    border: 1px solid #64964d;
+    margin-left: 3px;
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #939393;
+}
+
+.pagenavi a:hover,
+.pagenavi .current {
+    background: #64964d;
+    color: #fff;
+    border: 1px solid #64964d;
+}
+
+.pagenavi .pages {
+    float: left;
+}
+
+/*=== Chart. ===*/
+.chart_container {
+    width: 550px;
+    height: 500px;
+}
+
+.chart_container_l {
+    width: 1100px;
+    height: 500px;
+}
+
+/* index */
+.in_text {
+    text-align: left;
+    padding: 5px;
+    padding-bottom: 20px;
+}
+
+.in_title {
+    color: #bb720e;
+    font-weight: bold;
+}
+
+.in_link {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    width: 1000px;
+    height: 300px;
+}
+
+.in_link_img {
+    background-color: gainsboro;
+    width: 420px;
+    height: 260px;
+}
+
+.in_link_text {
+    background-color: #454545;
+    height: 40px;
+    line-height: 40px;
+    font-weight: bold;
+}
+
+.in_link_text a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/*shared  */
+.related {
+    background-color: #e9f8f5;
+    height: 200px;
+}
+
+.copyright {
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+/*form*/
+.underline_input {
+    border-color: #878787;
+    border-style: solid;
+    border-top-width: 0px;
+    border-right-width: 0px;
+    border-bottom-width: 1px;
+    border-left-width: 0px;
+}
+
+/* ========= data-bs-theme="blue" ========= */
+/* 根主题变量（可用） */
+[data-bs-theme="blue"] {
+    --bs-body-color: #ffffff;
+    --bs-body-bg: #0f407b;
+    --bs-tertiary-bg: #234444;
+}
+
+/* 下拉菜单：不透明背景 + 白字 */
+[data-bs-theme="blue"] .dropdown-menu {
+    --bs-dropdown-bg: #0f407b;
+    --bs-dropdown-link-color: #ffffff;
+    --bs-dropdown-link-hover-color: #e0e0e0;
+    --bs-dropdown-link-active-bg: #1f1f3c;
+    --bs-dropdown-link-active-color: #ffffff;
+}
+
+/* Navbar：用变量统一控制链接颜色 */
+[data-bs-theme="blue"] .navbar {
+    --bs-navbar-color: #ffffff;
+    --bs-navbar-hover-color: #d1d1d1;
+    --bs-navbar-active-color: #ffcc66;
+    /* 你可换成浅绿 #66cccc */
+    --bs-navbar-brand-color: #ffffff;
+    --bs-navbar-brand-hover-color: #ffffff;
+    --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* 兜底：确保 nav-link 一定是白色（防止其它样式覆盖） */
+[data-bs-theme="blue"] .navbar .nav-link {
+    color: #ffffff !important;
+}
+
+[data-bs-theme="blue"] .navbar .nav-link:hover,
+[data-bs-theme="blue"] .navbar .nav-link:focus {
+    color: #d1d1d1 !important;
+}
+
+/* 汉堡按钮图标在深色背景下更清晰 */
+[data-bs-theme="blue"] .navbar .navbar-toggler-icon {
+    filter: invert(1) brightness(200%);
+}
+
+
+/* ========= Multi-level dropdown for Bootstrap 5 ========= */
+
+/* 1) 子菜单容器相对定位 */
+.dropdown-submenu {
+    position: relative;
+}
+
+/* 2) 子菜单默认在右侧展开 */
+.dropdown-submenu>.dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -0.25rem;
+    margin-left: 0.25rem;
+}
+
+/* 3) 桌面端：悬停即可展开（也支持点击，二者都行） */
+@media (min-width: 992px) {
+    .dropdown-menu>.dropdown-submenu:hover>.dropdown-menu {
+        display: block;
+    }
+}
+
+/* 4) 子菜单的小箭头改为“向右” */
+.dropdown-submenu>.dropdown-item.dropdown-toggle::after {
+    transform: rotate(-90deg);
+    margin-left: 0.255em;
+    vertical-align: 0.255em;
+}
+
+/* 5) 顶层菜单如果用了 dropdown-menu-end（靠右对齐），子菜单向左展开 */
+.dropdown-menu.dropdown-menu-end>.dropdown-submenu>.dropdown-menu {
+    left: auto;
+    right: 100%;
+    margin-left: 0;
+    margin-right: 0.25rem;
+}
+
+/* 6) 如果你给某个子级手动加了 .dropstart，也向左展开 */
+.dropdown-submenu.dropstart>.dropdown-menu {
+    left: auto;
+    right: 100%;
+    margin-left: 0;
+    margin-right: 0.25rem;
+}
+
+/* 7) 移动端：子菜单改为纵向堆叠（更易用） */
+@media (max-width: 991.98px) {
+    .dropdown-submenu>.dropdown-menu {
+        position: static;
+        float: none;
+        margin: 0.5rem 0 0.5rem 1rem;
+        /* 稍微缩进，层级更清晰 */
+    }
+}
+
+.navbar {
+    font: normal 16px/2em Arial, Helvetica, sans-serif;
+}
+
+.navbar-nav .dropdown-item:hover {
+    background-color: #194e74;
+}
+
+.main-banner {
+    background: #dff8f2;
+    display: flex;
+}
+
+.main-banner-img {
+    margin: auto;
+}
+
+.step-div {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.step-p {
+    background-color: #8a7f77;
+    color: white;
+    margin-top: 12px;
+    margin-left: 4px;
+    border-radius: 4px;
+    padding: 6px 14px;
+}
+
+.icon {
+    display: inline-block;
+    vertical-align: middle;
+    /* 关键属性 */
+    background-image: url('icons-sprite.png');
+    background-repeat: no-repeat;
+}
+
+/* 原始尺寸：48px */
+.icon--48 {
+    width: 48px;
+    height: 48px;
+    background-size: 96px 96px;
+    /* 雪碧图总大小 */
+}
+
+.icon--48.icon-1 {
+    background-position: 0 0;
+}
+
+.icon--48.icon-2 {
+    background-position: -48px 0;
+}
+
+.icon--48.icon-3 {
+    background-position: 0 -48px;
+}
+
+.icon--48.icon-4 {
+    background-position: -48px -48px;
+}
+
+/* 缩小尺寸：24px */
+.icon--24 {
+    width: 24px;
+    height: 24px;
+    background-size: 48px 48px;
+    /* 关键：将雪碧图缩小50% */
+}
+
+.icon--24.icon-1 {
+    background-position: 0 0;
+}
+
+.icon--24.icon-2 {
+    background-position: -24px 0;
+}
+
+.icon--24.icon-3 {
+    background-position: 0 -24px;
+}
+
+.icon--24.icon-4 {
+    background-position: -24px -24px;
+}
+
+/* 其他尺寸同理 */
+.icon--36 {
+    width: 36px;
+    height: 36px;
+    background-size: 72px 72px;
+    /* 96px × (36/48) = 72px */
+}
+
+.icon--36.icon-1 {
+    background-position: 0 0;
+}
+
+.icon--36.icon-2 {
+    background-position: -36px 0;
+}
+
+.icon--36.icon-3 {
+    background-position: 0 -36px;
+}
+
+.icon--36.icon-4 {
+    background-position: -36px -36px;
+}
+
+
+
+.logo-high {
+    display: inline-block;
+    width: 36px;
+    /* 根据实际图片调整 */
+    height: 36px;
+    /* 根据实际图片调整 */
+    background-image: url('high.png');
+    background-size: contain;
+    /* 保持图片比例 */
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.logo-low {
+    display: inline-block;
+    width: 36px;
+    /* 根据实际图片调整 */
+    height: 36px;
+    /* 根据实际图片调整 */
+    background-image: url('low.png');
+    background-size: contain;
+    /* 保持图片比例 */
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.logo-unclear {
+    display: inline-block;
+    width: 36px;
+    /* 根据实际图片调整 */
+    height: 36px;
+    /* 根据实际图片调整 */
+    background-image: url('unclear.png');
+    background-size: contain;
+    /* 保持图片比例 */
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+.table-excellent {
+    --bs-table-striped-bg: #F5CBD8;
+}
+
+.table-good {
+    --bs-table-striped-bg: #E9D9F3;
+}
+
+.table-fair {
+    --bs-table-striped-bg: #F8E0C5;
+}
+
+.table-poor {
+    --bs-table-striped-bg: #E4F0CB;
+}
+
+/* 确保内容区域有足够高度 */
+.container {
+    min-height: calc(100vh - 250px);
+}
+
+/* 卡片头部颜色等级 */
+.card-header-excellent {
+    background-color: #F5CBD8;
+}
+
+.card-header-good {
+    background-color: #E9D9F3;
+}
+
+.card-header-fair {
+    background-color: #F8E0C5;
+}
+
+.card-header-poor {
+    background-color: #E4F0CB;
+}
+
+/* 模型ID样式 */
+.model-id {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+
+/* 雷达图容器（普通卡片使用） */
+.chart-container {
+    width: 100%;
+    height: 180px;
+}
+
+/* 模态框 iframe */
+#detail-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* 确保导航栏整体高度一致，背景贯穿整个高度 */
+/* 1. 让 .navbar 使用 flex 并允许子元素高度继承 */
+.navbar {
+    display: flex;
+    align-items: stretch;
+}
+
+/* 2. 让 .navbar-collapse 和 .navbar-nav 也占满高度 */
+.navbar-collapse {
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+}
+.navbar-nav {
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+}
+
+/* 3. 每个 .nav-item 也占满高度 */
+.navbar-nav .nav-item {
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+}
+
+/* 4. .nav-link 占满整个 .nav-item，文字居中，上下内边距归零 */
+.navbar-nav .nav-link {
+    display: flex;
+    align-items: center;      /* 文字垂直居中 */
+    padding: 0 1rem;          /* 上下内边距设为 0，左右可自定义 */
+    height: 100%;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;      /* 防止文字换行影响高度 */
+    font-weight: bold;
+}
+
+/* 5. 悬停效果：背景加深 + 下划线 */
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
+    background-color: rgba(0, 0, 0, 0.1);   /* 半透明黑色，自动适配主题 */
+    text-decoration: underline;
+}
+
+/* 针对蓝色主题的加深颜色（可选） */
+[data-bs-theme="blue"] .navbar-nav .nav-link:hover {
+    background-color: #1a5a9c;   /* 比原背景 #0f407b 更深 */
+}
+
+/* ========= 桌面端：增加导航项间距 ========= */
+@media (min-width: 992px) {
+    /* 确保父容器高度固定为80px */
+    .header_resize {
+        height: 80px;
+    }
+    /* navbar 填满父容器高度 */
+    .navbar {
+        height: 100%;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    /* 让品牌 Logo 区域也垂直居中且填满高度 */
+    .navbar-brand {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+    /* 折叠按钮（桌面端通常隐藏）也保持垂直居中 */
+    .navbar-toggler {
+        align-self: center;
+    }
+    /* 增加导航项之间的间距 */
+    .navbar-nav {
+        gap: 1rem;
+    }
+}
+
+/* ========= 移动端：让 header 高度自适应，防止折叠菜单溢出 ========= */
+@media (max-width: 991.98px) {
+    .header_resize {
+        height: auto;
+        min-height: 80px;  /* 保持最小高度，与 Logo 区域协调 */
+    }
+    /* 重置所有强行占满高度的属性，让菜单自然堆叠 */
+    .navbar,
+    .navbar-collapse,
+    .navbar-nav {
+        height: auto;
+    }
+    .navbar-nav .nav-item,
+    .navbar-nav .nav-link {
+        height: auto;
+    }
+    .navbar-brand {
+        height: auto;
+    }
+    /* 为移动端菜单项增加舒适的上下内边距 */
+    .navbar-nav .nav-link {
+        padding: 0.5rem 1rem;
+    }
+    /* 移动端导航项间距适当缩小 */
+    .navbar-nav {
+        gap: 0.25rem;
+    }
+}
+
+/* 面包屑导航美化 */
+/*
+.breadcrumb-nav {
+    background-color: #f8f9fa;  
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+}*/
+.breadcrumb-nav .breadcrumb {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+.breadcrumb-nav .breadcrumb-item a {
+    color: #0f407b;              /* 与您主题蓝色呼应 */
+    text-decoration: none;
+}
+.breadcrumb-nav .breadcrumb-item a:hover {
+    text-decoration: underline;
+}
+.breadcrumb-nav .breadcrumb-item.active {
+    color: #6c757d;
+}
+
+/* 覆盖 Bootstrap Table 默认搜索框样式 */
+.bootstrap-table .search .form-control {
+    /* 为左侧图标留出内边距 */
+    padding-left: 2rem;
+    /* 可保留你需要的其他样式，如圆角 */
+    border-radius: 0.25rem;
+}
+
+/* 添加装饰性搜索图标（伪元素） */
+.bootstrap-table .search {
+    position: relative;
+}
+
+.bootstrap-table .search::before {
+    content: "🔍";  /* 也可以换成 Font Awesome 等图标字符，例如 "\f002" */
+    font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free', 'Segoe UI Emoji', monospace;
+    font-weight: 900;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;  /* 让图标不干扰输入框点击 */
+    font-size: 0.9rem;
+    color: #6c757d;
+    z-index: 1;
+}
+
+/* 设置 placeholder 文本 */
+.bootstrap-table .search .form-control::placeholder {
+    content: "Search terms";  /* 标准写法 */
+    color: #6c757d;
+    opacity: 1;
+}
+
+/* 兼容不同浏览器的 placeholder 样式 */
+.bootstrap-table .search .form-control::-webkit-input-placeholder {
+    color: #6c757d;
+}
+.bootstrap-table .search .form-control::-moz-placeholder {
+    color: #6c757d;
+}
+.bootstrap-table .search .form-control:-ms-input-placeholder {
+    color: #6c757d;
+}
+
+.blue-header {
+  background-color: #003153 !important;
+  color: #ffffff !important;
+}
